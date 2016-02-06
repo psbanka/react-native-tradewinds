@@ -19,19 +19,34 @@ class CounterApp extends Component {
   */
 
   render() {
-    const { state, actions } = this.props;
     return (
         <Tradewinds
-          {...actions}
+          busy={this.props.busy}
+          {...this.props.actions}
         />
     );
   }
 }
 
+const mapStateToProps = (state) => {
+  console.log('our state: ', state);
+  return state.default;
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    actions: bindActionCreators(tradewindsActions, dispatch)
+  }
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(CounterApp);
+
+/*
 export default connect(state => ({
-    state: state.counter
+    state
   }),
   (dispatch) => ({
     actions: bindActionCreators(tradewindsActions, dispatch)
   })
 )(CounterApp);
+*/

@@ -55,6 +55,7 @@ export function readUserFromStorage() : any {
         }))
             .then((allResults) => {
                 dispatch(setUser(savedUserData));
+                dispatch(clearBusy());
             })
             .catch((error) => {
                 console.log('Error reading data from storage:')
