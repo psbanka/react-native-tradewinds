@@ -1,5 +1,6 @@
 import React, { Component, Text } from 'react-native';
-import BusyIndicator from './busy-indicator';
+import BusyIndicator from './BusyIndicator';
+import Login from './Login';
 
 // @connect(state => ({
 //   state: state.counter
@@ -21,7 +22,7 @@ export default class Tradewinds extends Component {
       );
     }
     return (
-      <Text>Hello world</Text>
+      <Login/>
     );
   }
 }
