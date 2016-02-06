@@ -1,6 +1,6 @@
-import React, { Component, Text } from 'react-native';
+import React, { Component, Text, View } from 'react-native';
 import {bindActionCreators} from 'redux';
-// import Counter from '../components/counter';
+import Tradewinds from './Tradewinds';
 import * as tradewindsActions from './actions/tradewindsActions';
 import { connect } from 'react-redux';
 
@@ -12,10 +12,18 @@ class CounterApp extends Component {
     super(props);
   }
 
+  /*
+  componentDidMount() {
+    this.props.readUserFromStorage();
+  }
+  */
+
   render() {
     const { state, actions } = this.props;
     return (
-      <Text>Hello world</Text>
+        <Tradewinds
+          {...actions}
+        />
     );
   }
 }
