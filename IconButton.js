@@ -29,8 +29,8 @@ let styles = StyleSheet.create({
     materialIcon: {
         width: 60,
         height: 95,
-        marginTop: -50,
-        marginLeft: -2,
+        marginTop: -20,
+        marginLeft: -5,
         backgroundColor: 'rgba(0,0,0,0)',
     },
     evilIcon: {

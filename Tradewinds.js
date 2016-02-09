@@ -22,7 +22,7 @@ export default class Tradewinds extends Component {
       );
     }
     return (
-      <Login/>
+      <Login onSubmit={this.props.loginUser}/>
     );
   }
 }

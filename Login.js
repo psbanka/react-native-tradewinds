@@ -8,6 +8,7 @@ import React, {
     Component,
     ScrollView,
     StyleSheet,
+    Switch,
     Text,
     TextInput,
     View,
@@ -38,7 +39,7 @@ type LocationData = {
 type AuthMessage = {
     provider: string,
     link: string,
-    email: string,
+    username: string,
     first_name: string,
     location: LocationData,
     name: string,
@@ -96,6 +97,7 @@ const styles = StyleSheet.create({
         height: 50,
         paddingLeft: 10,
         paddingRight: 10,
+          backgroundColor: '#f8e8ff',
     },
     errorBox: {
         paddingLeft: 30,
@@ -115,19 +117,11 @@ export default class Login extends Component {
         this.state = {
             // Do we want to ask them for all this stuff?
             userData: {
-                birthday: '',
-                email: '',
+                username: '',
                 errorMessage: '',
-                facebookId: 0,
-                facebookToken: '',
-                firstName: '',
-                gender: '',
-                locationId: 0,
-                locationName: '',
-                name: '',
                 password: '',
-                provider: '', // 'facebook' OR 'copinion'
             },
+            rememberMe: true,
             submitEnabled: false,
         };
     }
@@ -138,15 +132,14 @@ export default class Login extends Component {
         return newUserData;
     }
 
-    emailInput(event: SyntheticEvent) {
-        // TODO: verify email address complies with format
-        this.setState({userData: this._updateUserData('email', event.nativeEvent.text)});
+    usernameInput(event: SyntheticEvent) {
+        this.setState({userData: this._updateUserData('username', event.nativeEvent.text)});
     }
 
     passwordInput(event: SyntheticEvent) {
         let password = event.nativeEvent.text;
         let submitEnabled = false;
-        if (this.state.userData.email.length > 1) {
+        if (this.state.userData.username.length > 1) {
             if (password.length > 1) {
                 submitEnabled = true;
             }
@@ -156,6 +149,7 @@ export default class Login extends Component {
     }
 
     handleSubmit() {
+        console.log('hello');
         this.props.onSubmit(this.state.userData);
     }
 
@@ -166,17 +160,17 @@ export default class Login extends Component {
                     scrollEventThrottle={200}
                     style={styles.container}
             >
-                <Text style={styles.heading}>Create An Account</Text>
+                <Text style={styles.heading}>Log in to Tradewinds</Text>
                 <View style={styles.inputSection}>
-                    <Text style={styles.inputLabel}>Email address</Text>
+                    <Text style={styles.inputLabel}>Username</Text>
                     <TextInput
                         autoCapitalize={'none'}
                         autoCorrect={false}
                         autoFocus={true}
-                        onChange={this.emailInput.bind(this)}
-                        ref="emailInput"
+                        onChange={this.usernameInput.bind(this)}
+                        ref="usernameInput"
                         style={styles.inputWidget}
-                        value={this.state.userData.email}
+                        value={this.state.userData.username}
                     />
                 </View>
                 <View style={styles.inputSection}>
@@ -188,6 +182,14 @@ export default class Login extends Component {
                         ref="passwordInput"
                         style={styles.inputWidget}
                         value={this.state.userData.password}
+                    />
+                </View>
+                <View style={styles.inputSection}>
+                    <Text style={styles.inputLabel}>Remember me?</Text>
+                    <Switch
+                        onValueChange={(value) => this.setState({rememberMe: value})}
+                        style={{marginBottom: 10, marginTop: 10}}
+                        value={this.state.rememberMe}
                     />
                 </View>
                 <IconButton

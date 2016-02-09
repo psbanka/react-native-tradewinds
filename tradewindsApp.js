@@ -12,12 +12,6 @@ class CounterApp extends Component {
     super(props);
   }
 
-  /*
-  componentDidMount() {
-    this.props.readUserFromStorage();
-  }
-  */
-
   render() {
     return (
         <Tradewinds
@@ -29,7 +23,6 @@ class CounterApp extends Component {
 }
 
 const mapStateToProps = (state) => {
-  console.log('our state: ', state);
   return state.default;
 };
 
