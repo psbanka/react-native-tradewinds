@@ -21,6 +21,7 @@
 		090FA67A1C66971100F976BA /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 090FA6721C66971100F976BA /* MaterialIcons.ttf */; };
 		090FA67B1C66971100F976BA /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 090FA6731C66971100F976BA /* Octicons.ttf */; };
 		090FA67C1C66971100F976BA /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 090FA6741C66971100F976BA /* Zocial.ttf */; };
+		090FA6BB1C69A1D700F976BA /* RNCookieManagerIOS.m in Sources */ = {isa = PBXBuildFile; fileRef = 090FA6BA1C69A1D700F976BA /* RNCookieManagerIOS.m */; };
 		133E29F31AD74F7200F7D852 /* libRCTLinking.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 78C398B91ACF4ADC00677621 /* libRCTLinking.a */; };
 		139105C61AF99C1200B5F7CC /* libRCTSettings.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 139105C11AF99BAD00B5F7CC /* libRCTSettings.a */; };
 		139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 139FDEF41B06529B00C62182 /* libRCTWebSocket.a */; };
@@ -147,6 +148,8 @@
 		090FA6721C66971100F976BA /* MaterialIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = MaterialIcons.ttf; sourceTree = "<group>"; };
 		090FA6731C66971100F976BA /* Octicons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Octicons.ttf; sourceTree = "<group>"; };
 		090FA6741C66971100F976BA /* Zocial.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Zocial.ttf; sourceTree = "<group>"; };
+		090FA6B91C69A1D700F976BA /* RNCookieManagerIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNCookieManagerIOS.h; sourceTree = "<group>"; };
+		090FA6BA1C69A1D700F976BA /* RNCookieManagerIOS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNCookieManagerIOS.m; sourceTree = "<group>"; };
 		139105B61AF99BAD00B5F7CC /* RCTSettings.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTSettings.xcodeproj; path = "../node_modules/react-native/Libraries/Settings/RCTSettings.xcodeproj"; sourceTree = "<group>"; };
 		139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTWebSocket.xcodeproj; path = "../node_modules/react-native/Libraries/WebSocket/RCTWebSocket.xcodeproj"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* Tradewinds.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tradewinds.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -279,6 +282,15 @@
 			path = Fonts;
 			sourceTree = "<group>";
 		};
+		090FA6B81C69A1D700F976BA /* RNCookieManagerIOS */ = {
+			isa = PBXGroup;
+			children = (
+				090FA6B91C69A1D700F976BA /* RNCookieManagerIOS.h */,
+				090FA6BA1C69A1D700F976BA /* RNCookieManagerIOS.m */,
+			);
+			path = RNCookieManagerIOS;
+			sourceTree = "<group>";
+		};
 		139105B71AF99BAD00B5F7CC /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -354,6 +366,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				090FA6B81C69A1D700F976BA /* RNCookieManagerIOS */,
 				090FA66C1C66971100F976BA /* Fonts */,
 				13B07FAE1A68108700A75B9A /* Tradewinds */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
@@ -654,6 +667,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
+				090FA6BB1C69A1D700F976BA /* RNCookieManagerIOS.m in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
