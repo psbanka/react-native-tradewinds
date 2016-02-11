@@ -32,6 +32,7 @@ let styles = StyleSheet.create({
     padding: 20,
   },
   resultsList: {
+    height: commonStyles.deviceHeight * 0.8,
   },
   rowContainerEven: {
     padding: 10,

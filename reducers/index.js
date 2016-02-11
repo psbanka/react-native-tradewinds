@@ -7,7 +7,8 @@ const initialState = {
     password: null,
     cookie: null,
   },
-  reservations: null,
+  reservations: [],
+  // reservations: null,
 };
 
 export default function counter(state = initialState, action = {}) {
