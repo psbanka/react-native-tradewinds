@@ -14,6 +14,7 @@ import React, {
 } from 'react-native';
 import commonStyles from './common-styles';
 import IconButton from './IconButton';
+import Modal from 'react-native-modalbox';
 
 /****************
  *  Main class  *
@@ -51,6 +52,14 @@ let styles = StyleSheet.create({
     marginTop: -10,
     paddingTop: 12,
   },
+  modal: {
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  modal2: {
+    height: 230,
+    backgroundColor: "#3B5998"
+  },
 })
 
 export default class MainMenu extends Component {
@@ -60,6 +69,7 @@ export default class MainMenu extends Component {
     this.rowIndex = 0;
     this.state = {
       dataSource: null,
+      modalOpen: false,
     };
   }
 
@@ -89,6 +99,21 @@ export default class MainMenu extends Component {
 
   addReservations() {
     console.log('add a reservation!')
+    this.refs.modal1.open();
+  }
+
+  toggleSwipeToClose() {
+    this.refs.modal1.close();
+  }
+
+  onClose() {
+    this.setState({modalOpen: false});
+    console.log('on-close')
+  }
+
+  onOpen() {
+    this.setState({modalOpen: true});
+    console.log('on-open')
   }
 
   render() {
@@ -101,18 +126,40 @@ export default class MainMenu extends Component {
         style={styles.resultsList}
       />
     );
+    let addButton = null
+    if (!this.state.modalOpen) {
+      addButton = (
+        <IconButton
+          active={true}
+          color={'green'}
+          iconName={'add-circle'}
+          iconFamily={'material'}
+          buttonStyle={styles.buttonStyle}
+          onPress={this.addReservations.bind(this, null)}
+        />
+      )
+    }
     return (
       <ScrollView style={styles.container}>
           <Text style={styles.heading}>{"Reservations"}</Text>
           {resultsList}
-          <IconButton
-            active={true}
-            color={'green'}
-            iconName={'add-circle'}
-            iconFamily={'material'}
-            buttonStyle={styles.buttonStyle}
-            onPress={this.addReservations.bind(this, null)}
-          />
+          <Modal
+            style={[styles.modal, styles.modal1]}
+            ref={"modal1"}
+            onClosed={this.onClose.bind(this)}
+            onOpened={this.onOpen.bind(this)}
+          >
+            <Text style={styles.text}>Basic modal</Text>
+            <IconButton
+              active={true}
+              color={'red'}
+              iconName={'clear'}
+              iconFamily={'material'}
+              buttonStyle={styles.buttonStyle}
+              onPress={this.toggleSwipeToClose.bind(this, null)}
+            />
+          </Modal>
+          {addButton}
       </ScrollView>
     )
   }
@@ -121,5 +168,4 @@ export default class MainMenu extends Component {
 MainMenu.displayName = 'MainMenu';
 MainMenu.propTypes = {
     reservations: React.PropTypes.array.isRequired,
-};
-
+}
