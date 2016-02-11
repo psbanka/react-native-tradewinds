@@ -29,9 +29,7 @@ export default class Tradewinds extends Component {
       );
     } else {
         return (
-            <View style={{marginTop: 100}}>
-                <Text>Hello World</Text>
-            </View>
+            <MainMenu reservations={this.props.reservations}/>
         )
     }
   }
