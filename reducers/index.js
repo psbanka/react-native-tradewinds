@@ -6,7 +6,8 @@ const initialState = {
     username: null,
     password: null,
     cookie: null,
-  }
+  },
+  reservations: null,
 };
 
 export default function counter(state = initialState, action = {}) {
@@ -25,6 +26,11 @@ export default function counter(state = initialState, action = {}) {
       return {
         ...state,
         userData: action.userData
+      };
+    case types.SET_RESERVATIONS:
+      return {
+        ...state,
+        reservations: action.reservations,
       };
     default:
       return state;

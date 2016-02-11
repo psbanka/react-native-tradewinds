@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 // @connect(state => ({
 //   state: state.counter
 // }))
-class CounterApp extends Component {
+class TradewindsApp extends Component {
   constructor(props) {
     super(props);
   }
@@ -16,6 +16,7 @@ class CounterApp extends Component {
     return (
         <Tradewinds
           busy={this.props.busy}
+          reservations={this.props.reservations}
           {...this.props.actions}
         />
     );
@@ -32,14 +33,4 @@ const mapDispatchToProps = (dispatch) => {
   }
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(CounterApp);
-
-/*
-export default connect(state => ({
-    state
-  }),
-  (dispatch) => ({
-    actions: bindActionCreators(tradewindsActions, dispatch)
-  })
-)(CounterApp);
-*/
+export default connect(mapStateToProps, mapDispatchToProps)(TradewindsApp);

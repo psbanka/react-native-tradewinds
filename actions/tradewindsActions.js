@@ -5,9 +5,21 @@ import * as types from './actionTypes';
 import _ from 'lodash';
 const CookieManager = require('react-native-cookies');
 
+const urls = {
+  newReservations: 'http://www.tradewindssailing.com/wsdl/ReserveDates.php',
+};
+
 const userDataKeys = [
     'username','password', 'cookie',
 ];
+
+type Reservation = {
+  category: string,
+  id: string,
+  name: string,
+  startTime: string,
+  endTime: string,
+}
 
 /*********************************************************************
  *                        Synchronous actions                        *
@@ -30,6 +42,13 @@ export function setUser(savedUserData: any): any {
     type: types.SET_USER_DATA,
     savedUserData,
   };
+}
+
+export function setReservations(reservations: Array<Reservation>): any {
+  return {
+    type: types.SET_RESERVATIONS,
+    reservations,
+  }
 }
 
 /*********************************************************************
@@ -67,16 +86,61 @@ export function readUserFromStorage() : any {
     }
 };
 
-function serializeJson (data) {
-  return Object.keys(data).map(function (keyName) {
-    return encodeURIComponent(keyName) + '=' + encodeURIComponent(data[keyName])
-  }).join('&');
-}
-
 function getExpiry() {
   let exDate = new Date();
   exDate.setDate(exDate.getDate() + 10);
   return `${exDate.getUTCFullYear()}-${exDate.getUTCMonth()}-${exDate.getUTCDate()}T12:30:00.00-05:00`;
+}
+
+function parseReservations(html) {
+  let start = false
+  let lines = _.filter(html.split('\n').map(line => {
+    if (start) return line
+    if (/\<h6 class=wsdlcenter\>(.*)/m.exec(line)) start = true
+  }))
+
+  let reservationSection = _.filter(lines, line => {
+    return line && line.startsWith('\t<td>')
+  })
+
+  let output = reservationSection.map(reservation => {
+    let data = reservation.split('</td><td>')
+    let category = data[0].replace('\t<td>', '');
+    let id = data[1]
+    let name = data[2];
+    let startTime = data[5].replace('<br/>', ' ').replace('<br/>', ' ')
+    let endTime = data[6].replace('<br/>', ' ').replace('<br/>', ' ')
+    return {category, id, name, startTime, endTime};
+  })
+  return output;
+}
+
+export function setCookie(newCookie: any) : any {
+  return function(dispatch) {
+    CookieManager.set(newCookie, (err, res) => {
+      const params = {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: 'userid=8637900&pwd=4zBDkV1Agi&Submit=Submit',
+      };
+
+      return fetch('http://www.tradewindssailing.com/wsdl/Logon-action.php', params)
+        .then(logonAction => {
+          return fetch('http://www.tradewindssailing.com/wsdl/Reservations.php')
+            .then(reservationResponse => {
+              const html = reservationResponse._bodyText;
+              const reservations = parseReservations(html)
+              console.log('reservations: ', reservations)
+              dispatch(setReservations(reservations))
+            });
+        })
+        .catch(error => {
+          console.log('error encountered: ', error);
+        });
+    });
+  }
 }
 
 export function loginUser(userData: any) : any {
@@ -84,17 +148,8 @@ export function loginUser(userData: any) : any {
 
     userData.password = '4zBDkV1Agi';
     userData.username = '8637900';
-    const params = {
-      method: 'POST',
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: 'userid=8637900&pwd=4zBDkV1Agi&Submit=Submit',
-    };
 
-    console.log('user is logging in!!!', userData);
-
-    fetch('http://www.tradewindssailing.com/wsdl/Logon.php', params)
+    fetch('http://www.tradewindssailing.com/wsdl/Logon.php')
       .then(output => {
 
         // list cookies
@@ -104,7 +159,6 @@ export function loginUser(userData: any) : any {
 
           // set cookie
 
-          //const newCookie = Object.assign({version: '1', expiration: getExpiry(), origin: 'tradewindssailing.com'}, cookies.PHPSESSID);
           const newCookie = {
             name: 'PHPSESSID',
             value: cookies.PHPSESSID.value,
@@ -114,23 +168,8 @@ export function loginUser(userData: any) : any {
             version: '1',
             expiration: '2016-05-30T12:30:00.00-05:00'
           }
-
-          CookieManager.set(newCookie, (err, res) => {
-            console.log('cookie set!');
-            console.log(err);
-            console.log(res);
-
-            return fetch('http://www.tradewindssailing.com/wsdl/Logon-action.php', params)
-              .then(logonAction => {
-                return fetch('http://www.tradewindssailing.com/wsdl/Reservations.php')
-                  .then(reservations => {
-                    debugger;
-                    console.log(reservations);
-                  });
-              });
-          });
+          dispatch(setCookie(newCookie))
         });
-      });
-
+    });
   }
 };

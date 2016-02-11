@@ -1,6 +1,8 @@
-import React, { Component, Text } from 'react-native';
+import React, { Component, Text, View } from 'react-native';
 import BusyIndicator from './BusyIndicator';
 import Login from './Login';
+import MainMenu from './MainMenu';
+import _ from 'lodash'
 
 // @connect(state => ({
 //   state: state.counter
@@ -21,8 +23,16 @@ export default class Tradewinds extends Component {
         <BusyIndicator/>
       );
     }
-    return (
-      <Login onSubmit={this.props.loginUser}/>
-    );
+    if (_.isNull(this.props.reservations)) {
+      return (
+        <Login onSubmit={this.props.loginUser}/>
+      );
+    } else {
+        return (
+            <View style={{marginTop: 100}}>
+                <Text>Hello World</Text>
+            </View>
+        )
+    }
   }
 }
