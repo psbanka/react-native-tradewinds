@@ -21,10 +21,7 @@ const CalendarPicker = require('react-native-calendar-picker');
 let styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: commonStyles.deviceWidth,
-    height: commonStyles.deviceHeight,
     backgroundColor: '#eaf4be',
-    justifyContent: 'space-between',
   },
   modal: {
     justifyContent: 'center',
@@ -64,24 +61,27 @@ let styles = StyleSheet.create({
 export default class AddReservations extends Component {
   constructor(props: any) {
     super(props);
+    let tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
     this.state = {
-      date: new Date(),
+      startDate: new Date(),
+      endDate: tomorrow,
       modalOpen: false,
     };
   }
 
-  open() {
-    this.refs.modal1.open()
+  open(varName: string) {
+    this.refs[`${varName}-modal`].open()
     this.setState({modalOpen: true})
   }
 
-  close() {
-    this.refs.modal1.close()
+  close(varName: string) {
+    this.refs[`${varName}-modal`].close()
     this.setState({modalOpen: false})
   }
 
-  onDateChange(date: any) {
-    this.setState({date})
+  onDateChange(varName: string, date: any) {
+    this.setState({[varName]: date})
   }
 
   onClose() {
@@ -92,8 +92,32 @@ export default class AddReservations extends Component {
     console.log('open')
   }
 
-  niceDate(): string {
-    return this.state.date.toString().split(' ').splice(0,3).join(' ')
+  niceDate(varName: string): string {
+    return this.state[varName].toString().split(' ').splice(0,3).join(' ')
+  }
+
+  getCalendarModal(varName: string) {
+    return (
+      <Modal
+        style={styles.modal}
+        ref={`${varName}-modal`}
+        onClosed={this.onClose}
+        onOpened={this.onOpen}
+      >
+        <CalendarPicker
+          selectedDate={this.state[varName]}
+          onDateChange={this.onDateChange.bind(this, varName)}
+        />
+        <IconButton
+          active={true}
+          color={'green'}
+          iconName={'check'}
+          iconFamily={'material'}
+          buttonStyle={styles.buttonStyle}
+          onPress={this.close.bind(this, varName)}
+        />
+      </Modal>
+    )
   }
 
   render() {
@@ -111,39 +135,24 @@ export default class AddReservations extends Component {
       )
     }
     return (
-      <View>
-        <View style={styles.container}>
-          <Text style={styles.heading}>New reservation</Text>
-          <View style={styles.inputSection}>
-            <TouchableOpacity
-                onPress={this.open.bind(this)}
-            >
-              <Text style={styles.inputLabel}>Start
-                Date:  {this.niceDate()}
-              </Text>
-            </TouchableOpacity>
-            {iconButton}
-          </View>
+      <View style={styles.container}>
+        {this.getCalendarModal('startDate')}
+        {this.getCalendarModal('endDate')}
+        <Text style={styles.heading}>New reservation</Text>
+        <View style={styles.inputSection}>
+          <TouchableOpacity onPress={this.open.bind(this, 'startDate')}>
+            <Text style={styles.inputLabel}>Start
+              Date:  {this.niceDate('startDate')}
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={this.open.bind(this, 'endDate')}>
+            <Text style={styles.inputLabel}>End
+              Date:  {this.niceDate('endDate')}
+            </Text>
+          </TouchableOpacity>
+          {iconButton}
         </View>
-        <Modal
-          style={styles.modal}
-          ref={"modal1"}
-          onClosed={this.onClose}
-          onOpened={this.onOpen}
-        >
-          <CalendarPicker
-            selectedDate={this.state.date}
-            onDateChange={this.onDateChange.bind(this)}
-          />
-          <IconButton
-            active={true}
-            color={'green'}
-            iconName={'check'}
-            iconFamily={'material'}
-            buttonStyle={styles.buttonStyle}
-            onPress={this.close.bind(this)}
-          />
-        </Modal>
       </View>
     )
   }
