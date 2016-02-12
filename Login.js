@@ -79,11 +79,6 @@ const styles = StyleSheet.create({
     inputLabel: {
         height: 15,
     },
-    spacer: {
-        paddingBottom: 30,
-        height:10,
-        width: 1,
-    },
     buttonStyle: {
         width: 50,
         height: 50,
