@@ -29,7 +29,9 @@ export default class Tradewinds extends Component {
       );
     } else {
         return (
-            <MainMenu reservations={this.props.reservations}/>
+          <MainMenu
+            reservations={this.props.reservations}
+          />
         )
     }
   }

@@ -75,6 +75,7 @@ export function readUserFromStorage() : any {
         }))
             .then((allResults) => {
                 dispatch(setUser(savedUserData));
+                dispatch(loginUser(savedUserData));
                 dispatch(clearBusy());
             })
             .catch((error) => {
@@ -117,6 +118,7 @@ function parseReservations(html) {
 
 export function setCookie(newCookie: any) : any {
   return function(dispatch) {
+    console.log('Setting cookies...');
     CookieManager.set(newCookie, (err, res) => {
       const params = {
         method: 'POST',
@@ -130,6 +132,7 @@ export function setCookie(newCookie: any) : any {
         .then(logonAction => {
           return fetch('http://www.tradewindssailing.com/wsdl/Reservations.php')
             .then(reservationResponse => {
+              console.log('parsing reservations...');
               const html = reservationResponse._bodyText;
               const reservations = parseReservations(html)
               console.log('reservations: ', reservations)
@@ -154,9 +157,6 @@ export function loginUser(userData: any) : any {
 
         // list cookies
         CookieManager.getAll((cookies, status) => {
-          console.log(cookies);
-          console.log(status);
-
           // set cookie
 
           const newCookie = {
