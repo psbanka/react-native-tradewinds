@@ -13,14 +13,6 @@ const userDataKeys = [
     'username','password', 'cookie',
 ];
 
-type Reservation = {
-  category: string,
-  id: string,
-  name: string,
-  startTime: string,
-  endTime: string,
-}
-
 /*********************************************************************
  *                        Synchronous actions                        *
  *********************************************************************/
@@ -44,10 +36,10 @@ export function setUser(savedUserData: any): any {
   };
 }
 
-export function setReservations(reservations: Array<Reservation>): any {
+export function setReservations(html: string): any {
   return {
     type: types.SET_RESERVATIONS,
-    reservations,
+    reservationResponse: html,
   }
 }
 
@@ -76,7 +68,6 @@ export function readUserFromStorage() : any {
             .then((allResults) => {
                 dispatch(setUser(savedUserData));
                 dispatch(loginUser(savedUserData));
-                dispatch(clearBusy());
             })
             .catch((error) => {
                 console.log('Error reading data from storage:')
@@ -91,29 +82,6 @@ function getExpiry() {
   let exDate = new Date();
   exDate.setDate(exDate.getDate() + 10);
   return `${exDate.getUTCFullYear()}-${exDate.getUTCMonth()}-${exDate.getUTCDate()}T12:30:00.00-05:00`;
-}
-
-function parseReservations(html) {
-  let start = false
-  let lines = _.filter(html.split('\n').map(line => {
-    if (start) return line
-    if (/\<h6 class=wsdlcenter\>(.*)/m.exec(line)) start = true
-  }))
-
-  let reservationSection = _.filter(lines, line => {
-    return line && line.startsWith('\t<td>')
-  })
-
-  let output = reservationSection.map(reservation => {
-    let data = reservation.split('</td><td>')
-    let category = data[0].replace('\t<td>', '');
-    let id = data[1]
-    let name = data[2];
-    let startTime = data[5].replace('<br/>', ' ').replace('<br/>', ' ')
-    let endTime = data[6].replace('<br/>', ' ').replace('<br/>', ' ')
-    return {category, id, name, startTime, endTime};
-  })
-  return output;
 }
 
 export function setCookie(newCookie: any) : any {
@@ -132,11 +100,9 @@ export function setCookie(newCookie: any) : any {
         .then(logonAction => {
           return fetch('http://www.tradewindssailing.com/wsdl/Reservations.php')
             .then(reservationResponse => {
-              console.log('parsing reservations...');
               const html = reservationResponse._bodyText;
-              const reservations = parseReservations(html)
-              console.log('reservations: ', reservations)
-              dispatch(setReservations(reservations))
+              dispatch(setReservations(html))
+              dispatch(clearBusy());
             });
         })
         .catch(error => {

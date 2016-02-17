@@ -31,6 +31,7 @@ export default class Tradewinds extends Component {
         return (
           <MainMenu
             reservations={this.props.reservations}
+            setReservations={this.props.setReservations}
           />
         )
     }

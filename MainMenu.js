@@ -7,6 +7,7 @@
 import React, {
   Component,
   Navigator,
+  PropTypes,
   StyleSheet,
 } from 'react-native'
 
@@ -37,14 +38,16 @@ export default class MainMenu extends Component {
   render() {
     return (
       <ScrollableTabView renderTabBar={() => <CustomTabBar/>}>
-        <AddReservations
-          tabLabel={'add-circle'}
-          key={'add-circle'}
-        />
         <Reservations
-          reservations={this.props.reservations}
-          tabLabel={'Reorder'}
           key={'reorder'}
+          reservations={this.props.reservations}
+          setReservations={this.props.setReservations}
+          tabLabel={'Reorder'}
+        />
+        <AddReservations
+          key={'add-circle'}
+          tabLabel={'add-circle'}
+          setReservations={this.props.setReservations}
         />
       </ScrollableTabView>
     )
@@ -53,5 +56,6 @@ export default class MainMenu extends Component {
 
 MainMenu.displayName = 'MainMenu';
 MainMenu.propTypes = {
-    reservations: React.PropTypes.array.isRequired,
+  reservations: PropTypes.array.isRequired,
+  setReservations: PropTypes.func.isRequired,
 }

@@ -13,6 +13,7 @@ import React, {
   View,
 } from 'react-native'
 import commonStyles from './common-styles'
+import IconButton from './IconButton'
 
 /****************
  *  Main class  *
@@ -33,22 +34,24 @@ let styles = StyleSheet.create({
   resultsList: {
     height: commonStyles.deviceHeight * 0.7,
   },
-  rowContainerEven: {
+  row: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     padding: 10,
+  },
+  rowContainerEven: {
     backgroundColor: 'rgba(251,246,228,1)',
   },
   rowContainerOdd: {
-    padding: 10,
     backgroundColor: 'white',
   },
   buttonStyle: {
-    width: 50,
-    height: 50,
-    borderRadius: 50/2,
-    paddingBottom: 10,
-    marginRight: 10,
-    marginTop: -10,
-    paddingTop: 12,
+    width: 30,
+    height: 30,
+    borderRadius: 30/2,
+    paddingLeft: 5,
+    paddingTop: 20,
   },
 })
 
@@ -68,6 +71,42 @@ export default class Reservations extends Component {
     })
   }
 
+  componentWillReceiveProps(nextProps: any) {
+    this.setState({
+      dataSource: this.ds.cloneWithRows(nextProps.reservations)
+    })
+  }
+
+  _cancelBoat(index: number) {
+    const r = this.props.reservations[index - 1]
+    if (r === undefined) {
+      console.error('trying to cancel nonexistant reservation')
+    }
+
+    const begins = encodeURIComponent(r.begins)
+    const params = {
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: `begins=${begins}&venuecode=${r.venuecode}&boatsize=${r.boatsize}&boatcode=${r.boatcode}'`,
+    };
+
+    fetch('http://www.tradewindssailing.com/wsdl/Reservations-action-cancel.php', params)
+      .then(cancelResults => {
+        if (cancelResults.status = 200) {
+          if (cancelResults.url = "http://www.tradewindssailing.com/wsdl/Reservations.php") {
+            console.log('delete successful')
+          }
+        }
+        const html = cancelResults._bodyText;
+        this.props.setReservations(html)
+       })
+      .catch((error) => {
+        console.log('error cancelling boat', error);
+      })
+  }
+
   /**
    * Show a single reservation record
    */
@@ -79,8 +118,21 @@ export default class Reservations extends Component {
     this.rowIndex += 1;
     return (
       <View>
-        <View style={rowStyle}>
-          <Text>{rowData.name}</Text>
+        <View style={[styles.row, rowStyle]}>
+          <View>
+            <Text style={{fontWeight: 'bold'}}>{rowData.name}</Text>
+            <Text>Start: {rowData.startTime}</Text>
+            <Text>End: {rowData.endTime}</Text>
+          </View>
+          <IconButton
+            active={true}
+            color={'red'}
+            iconName={'clear'}
+            iconFamily={'material'}
+            iconSize={30}
+            buttonStyle={styles.buttonStyle}
+            onPress={this._cancelBoat.bind(this, this.rowIndex)}
+          />
         </View>
       </View>
     );

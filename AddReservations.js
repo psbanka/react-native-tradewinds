@@ -8,6 +8,7 @@ import React, {
   Component,
   PickerIOS,
   PickerItemIOS,
+  PropTypes,
   StyleSheet,
   Switch,
   Text,
@@ -92,11 +93,11 @@ function parseAvailableBoats(html) {
       }
     })
     let boatId = reservationValues[1]
-    let charterDays = reservationValues[2]
+    let charterdays = reservationValues[2]
     let time = reservationValues[3]
     let start = reservationValues[4]
     let boatSize = reservationValues[5]
-    return {name, boatId, charterDays, time, start, boatSize};
+    return {name, boatId, charterdays, time, start, boatSize};
   })
   return output;
 }
@@ -104,12 +105,11 @@ function parseAvailableBoats(html) {
 export default class AddReservations extends Component {
   constructor(props: any) {
     super(props);
-    let tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
     this.state = {
       availableBoats: [],
-      startDate: new Date(),
-      endDate: tomorrow,
+      boatId: null,
+      startDate: null,
+      endDate: null,
       startTime: true,
       endTime: false,
       modalOpen: false,
@@ -117,8 +117,21 @@ export default class AddReservations extends Component {
   }
 
   open(varName: string) {
+    if (_.isNull(this.state[varName])) {
+      // TODO: choose tomorrow if it's too late!
+      let initialDate = new Date();
+      if (varName === 'endDate') {
+        if (_.isNull(this.state.startDate)) {
+          return; // Do nothing if end is tapped but start not picked.
+        }
+        initialDate.setDate(this.state.startDate.getDate() + 1);
+      }
+      this.setState({
+        [varName]: initialDate,
+        modalOpen: true,
+      })
+    }
     this.refs[`${varName}-modal`].open()
-    this.setState({modalOpen: true})
   }
 
   close(varName: string) {
@@ -131,7 +144,10 @@ export default class AddReservations extends Component {
   }
 
   onClose() {
-    console.log('closed')
+    let complete = !_.isNull(this.state.startDate) && !_.isNull(this.state.endDate)
+    if (complete) {
+      this._findBoats()
+    }
   }
 
   onOpen() {
@@ -139,16 +155,22 @@ export default class AddReservations extends Component {
   }
 
   niceDate(varName: string): string {
+    if (_.isNull(this.state[varName])) {
+      return 'Tap to pick date'
+    }
     return this.state[varName].toString().split(' ').splice(0,3).join(' ')
   }
 
   getCalendarModal(varName: string) {
+    if (_.isNull(this.state[varName])) {
+      return null
+    }
     return (
       <Modal
         style={styles.modal}
         ref={`${varName}-modal`}
-        onClosed={this.onClose}
-        onOpened={this.onOpen}
+        onClosed={this.onClose.bind(this)}
+        onOpened={this.onOpen.bind(this)}
       >
         <CalendarPicker
           selectedDate={this.state[varName]}
@@ -182,31 +204,77 @@ export default class AddReservations extends Component {
       body: `dc1=${dc1}&time1=${time1}&dc2=${dc2}&time2=${time2}&senddata=Show+me+available+boats`,
     };
 
-    return fetch('http://www.tradewindssailing.com/wsdl/ReservationsAvailable.php', params)
+    fetch('http://www.tradewindssailing.com/wsdl/ReservationsAvailable.php', params)
       .then(fetchResults => {
         const html = fetchResults._bodyText;
-        this.setState({availableBoats: parseAvailableBoats(html)})
+        const availableBoats = parseAvailableBoats(html)
+        if (availableBoats.length) {
+          this.setState({
+            availableBoats,
+            boatId: availableBoats[0].boatId
+          })
+        }
+       })
+      .catch((error) => {
+        console.log('error retrieving bosts', error);
+      })
+  }
+
+  _reserveBoats() {
+    console.log('reserving some boats!')
+    const boat = _.find(this.state.availableBoats, {boatId: this.state.boatId})
+    if (!boat) {
+      console.log('ERROR: cannot find record for ', this.state.boatId)
+      return
+    }
+    const MONTH_NAME = [
+      'January', 'February', 'March', 'April', 'May', 'June', 'July',
+      'August', 'September', 'October', 'November', 'December'
+    ]
+    const sd = this.state.startDate
+    let start = `${MONTH_NAME[sd.getMonth()]}+${sd.getDate()}+${sd.getFullYear()}`
+    if (this.state.startTime) {
+      start += '+9+AM'
+    } else {
+      start += '+9+PM'
+    }
+
+    const params = {
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: `BoatID=${boat.boatId}&charterdays=${boat.charterdays}&time=${boat.time}&start=${start}&BoatSize=${boat.boatSize}`,
+    };
+
+    return fetch('http://www.tradewindssailing.com/wsdl/Reserve-action.php', params)
+      .then(fetchResults => {
+        const html = fetchResults._bodyText;
+        this.props.setReservations(html)
+      })
+      .catch((error) => {
+        console.log('error when reserving', error)
       })
   }
 
   render() {
     let iconButton = null
     if (!this.state.modalOpen) {
+      let active = !_.isNull(this.state.startDate) && !_.isNull(this.state.endDate)
       iconButton = (
         <IconButton
-          active={true}
+          active={active}
           color={'green'}
           iconName={'chevron-right'}
           iconFamily={'material'}
           buttonStyle={styles.buttonStyle}
-          onPress={this._findBoats.bind(this)}
+          onPress={this._reserveBoats.bind(this)}
         />
       )
     }
 
     let picker = null
     if (this.state.availableBoats.length) {
-      debugger
       picker = (
         <PickerIOS
           selectedValue={this.state.boatId}
@@ -253,8 +321,8 @@ export default class AddReservations extends Component {
             />
             <Text>{this.state.endTime ? 'Morning' : 'Evening' }</Text>
           </View>
-          {iconButton}
           {picker}
+          {iconButton}
         </View>
       </View>
     )
@@ -263,4 +331,5 @@ export default class AddReservations extends Component {
 
 AddReservations.displayName = 'AddReservations';
 AddReservations.propTypes = {
+  setReservations: PropTypes.func.isRequired,
 }

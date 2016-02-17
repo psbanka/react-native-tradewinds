@@ -64,7 +64,7 @@ class IconButton extends Component {
             icon = (
                 <MaterialIcon
                     name={this.props.iconName}
-                    size={65}
+                    size={this.props.iconSize || 65}
                     color={iconColor}
                     style={styles.materialIcon}
                 />
@@ -73,7 +73,7 @@ class IconButton extends Component {
             icon = (
                 <EvilIcon
                     name={this.props.iconName}
-                    size={65}
+                    size={this.props.iconSize || 65}
                     color={iconColor}
                     style={styles.evilIcon}
                 />
@@ -102,6 +102,7 @@ IconButton.propTypes = {
     iconColor: PropTypes.string,
     iconFamily: PropTypes.string,
     iconName: PropTypes.string.isRequired,
+    iconSize: PropTypes.number,
     onPress: PropTypes.func,
 };
 
