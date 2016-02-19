@@ -17,7 +17,6 @@ export default class Tradewinds extends Component {
   }
 
   render() {
-    console.log('busy?', this.props.busy);
     if (this.props.busy) {
       return (
         <BusyIndicator/>

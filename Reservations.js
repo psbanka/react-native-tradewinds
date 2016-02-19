@@ -14,6 +14,7 @@ import React, {
 } from 'react-native'
 import commonStyles from './common-styles'
 import IconButton from './IconButton'
+import _ from 'lodash'
 
 /****************
  *  Main class  *
@@ -72,6 +73,7 @@ export default class Reservations extends Component {
   }
 
   componentWillReceiveProps(nextProps: any) {
+    this.rowIndex = 0;
     this.setState({
       dataSource: this.ds.cloneWithRows(nextProps.reservations)
     })
@@ -89,20 +91,28 @@ export default class Reservations extends Component {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },
-      body: `begins=${begins}&venuecode=${r.venuecode}&boatsize=${r.boatsize}&boatcode=${r.boatcode}'`,
+      body: `begins=${begins}&venuecode=${r.venuecode}&boatsize=${r.boatsize}&boatcode=${r.boatcode}`,
     };
 
     fetch('http://www.tradewindssailing.com/wsdl/Reservations-action-cancel.php', params)
       .then(cancelResults => {
+        const html = cancelResults._bodyText;
         if (cancelResults.status = 200) {
-          if (cancelResults.url = "http://www.tradewindssailing.com/wsdl/Reservations.php") {
-            console.log('delete successful')
+          const message = _.filter(html.split('\n'), line => {
+            if (line.startsWith('<h4 class="wsdlmsg">')) {
+              return /\>(.+)\>/.exec(line)[1]
+            }
+          })
+          if (message.length) {
+            this.props.setMessage(message[0])
+          } else {
+            this.props.setMessage('error cancelling boat')
           }
         }
-        const html = cancelResults._bodyText;
         this.props.setReservations(html)
        })
       .catch((error) => {
+        this.props.setMessage('error cancelling boat')
         console.log('error cancelling boat', error);
       })
   }

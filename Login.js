@@ -144,7 +144,6 @@ export default class Login extends Component {
     }
 
     handleSubmit() {
-        console.log('hello');
         this.props.onSubmit(this.state.userData);
     }
 

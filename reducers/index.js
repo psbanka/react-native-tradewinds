@@ -66,15 +66,10 @@ function parseReservations(html): Array<Reservation>  {
   let output = []
   for (let i = 0, len = reservationSection.length; i < len; i++) {
     let reservation = reservationSection[i]
-    console.log('0', reservation);
     let reservationData = getReservationData(reservation);
-    console.log('1', reservationData);
     let cancellation = cancellationSection[i]
-    console.log('2', cancellation);
     let cancellationData = getCancellationData(cancellation);
-    console.log('3', cancellationData);
     let newLine = Object.assign({}, reservationData, cancellationData)
-    console.log('4', newLine);
     output.push({...reservationData, ...cancellationData})
   }
   return output;
@@ -102,6 +97,11 @@ export default function counter(state = initialState, action = {}) {
       return {
         ...state,
         reservations,
+      };
+    case types.SET_MESSAGE:
+      return {
+        ...state,
+        message: action.message,
       };
     default:
       return state;

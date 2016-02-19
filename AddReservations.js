@@ -150,8 +150,10 @@ export default class AddReservations extends Component {
     }
   }
 
+  /**
+   * Part of API for calendar- not used
+   */
   onOpen() {
-    console.log('open')
   }
 
   niceDate(varName: string): string {
@@ -217,11 +219,11 @@ export default class AddReservations extends Component {
        })
       .catch((error) => {
         console.log('error retrieving bosts', error);
+        this.props.setMessage('error retrieving boats')
       })
   }
 
   _reserveBoats() {
-    console.log('reserving some boats!')
     const boat = _.find(this.state.availableBoats, {boatId: this.state.boatId})
     if (!boat) {
       console.log('ERROR: cannot find record for ', this.state.boatId)
@@ -251,9 +253,13 @@ export default class AddReservations extends Component {
       .then(fetchResults => {
         const html = fetchResults._bodyText;
         this.props.setReservations(html)
+        // TODO: Parse message for confirmation
+        // TODO: Clear the form and move to reservations page
+        this.setMessage('boat reserved')
       })
       .catch((error) => {
         console.log('error when reserving', error)
+        this.setMessage('error reserving boat')
       })
   }
 

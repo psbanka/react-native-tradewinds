@@ -43,6 +43,13 @@ export function setReservations(html: string): any {
   }
 }
 
+export function setMessage(message: string): any {
+  return {
+    type: types.SET_MESSAGE,
+    message,
+  }
+}
+
 /*********************************************************************
  *                           Async actions                           *
  *********************************************************************/
@@ -73,6 +80,7 @@ export function readUserFromStorage() : any {
                 console.log('Error reading data from storage:')
                 console.log(error);
                 dispatch(clearBusy());
+                // TODO: Return user to login screen
             })
             .done();
     }
@@ -86,7 +94,6 @@ function getExpiry() {
 
 export function setCookie(newCookie: any) : any {
   return function(dispatch) {
-    console.log('Setting cookies...');
     CookieManager.set(newCookie, (err, res) => {
       const params = {
         method: 'POST',
@@ -106,7 +113,8 @@ export function setCookie(newCookie: any) : any {
             });
         })
         .catch(error => {
-          console.log('error encountered: ', error);
+          console.log('error encountered setting cookie: ', error);
+          // TODO: Return user to login screen
         });
     });
   }
