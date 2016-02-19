@@ -25,6 +25,7 @@ const CalendarPicker = require('react-native-calendar-picker')
 
 let styles = StyleSheet.create({
   container: {
+    padding: 15,
     flex: 1,
     backgroundColor: '#eaf4be',
   },
@@ -50,11 +51,17 @@ let styles = StyleSheet.create({
   },
   heading: {
     fontSize: 24,
-    marginBottom: 5,
   },
   inputSection: {
     flexDirection: 'column',
+    marginTop: 25,
     marginBottom: 10,
+  },
+  dateSection: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
   },
   inputLabel: {
     fontSize: 18,
@@ -263,6 +270,29 @@ export default class AddReservations extends Component {
       })
   }
 
+  getDateInput(label: string, dateVarName: string, timeVarName: string) {
+    return (
+      <View style={styles.inputSection}>
+        <Text style={styles.inputLabel}>{label}</Text>
+        <View style={styles.dateSection}>
+          <TouchableOpacity onPress={this.open.bind(this, dateVarName)}>
+            <Text style={styles.inputLabel}>
+              {this.niceDate(dateVarName)}
+            </Text>
+          </TouchableOpacity>
+          <View>
+            <Switch
+              onValueChange={(value) => this.setState({[timeVarName]: value})}
+              style={{marginBottom: 10}}
+              value={this.state[timeVarName]}
+            />
+            <Text style={{fontSize: 10}}>{this.state[timeVarName] ? 'Morning' : 'Evening'}</Text>
+          </View>
+        </View>
+      </View>
+    )
+  }
+
   render() {
     let iconButton = null
     if (!this.state.modalOpen) {
@@ -295,41 +325,16 @@ export default class AddReservations extends Component {
         </PickerIOS>
       )
     }
+
     return (
       <View style={styles.container}>
         {this.getCalendarModal('startDate')}
         {this.getCalendarModal('endDate')}
         <Text style={styles.heading}>New reservation</Text>
-        <View style={styles.inputSection}>
-          <TouchableOpacity onPress={this.open.bind(this, 'startDate')}>
-            <Text style={styles.inputLabel}>Start
-              Date:  {this.niceDate('startDate')}
-            </Text>
-          </TouchableOpacity>
-          <View style={{flex: 1, flexDirection: 'row'}}>
-            <Switch
-              onValueChange={(value) => this.setState({startTime: value})}
-              style={{marginBottom: 10}}
-              value={this.state.startTime}
-            />
-            <Text>{this.state.startTime ? 'Morning' : 'Evening' }</Text>
-          </View>
-          <TouchableOpacity onPress={this.open.bind(this, 'endDate')}>
-            <Text style={styles.inputLabel}>End
-              Date:  {this.niceDate('endDate')}
-            </Text>
-          </TouchableOpacity>
-          <View style={{flex: 1, flexDirection: 'row'}}>
-            <Switch
-              onValueChange={(value) => this.setState({endTime: value})}
-              style={{marginBottom: 10}}
-              value={this.state.endTime}
-            />
-            <Text>{this.state.endTime ? 'Morning' : 'Evening' }</Text>
-          </View>
-          {picker}
-          {iconButton}
-        </View>
+        {this.getDateInput('Start Date', 'startDate', 'startTime')}
+        {this.getDateInput('End Date', 'endDate', 'endTime')}
+        {picker}
+        {iconButton}
       </View>
     )
   }
