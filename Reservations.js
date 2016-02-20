@@ -151,7 +151,7 @@ export default class Reservations extends Component {
   emptyState() {
     return (
       <View>
-        <Text style={{color: '#7c3939', fontSize: 20, fontWeight: 'bold', paddingLeft: 30}}>
+        <Text style={{color: '#7c3939', fontSize: 20, fontWeight: 'bold', paddingLeft: 20}}>
           You have no reservations
         </Text>
         <View style={{paddingTop: 50, flex: 1, justifyContent: 'space-between', flexDirection: 'row'}}>

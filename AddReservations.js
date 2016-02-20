@@ -78,7 +78,8 @@ let styles = StyleSheet.create({
     paddingBottom: 10,
   },
   viewPlaceholder: {
-    height: 250,
+    color: '#a38c8c',
+    height: 230,
   },
   hidden: {
     height: 0,
@@ -134,6 +135,7 @@ export default class AddReservations extends Component {
     super(props);
     this.state = {
       availableBoats: [],
+      currentMessage: 'Please pick dates first',
       boatId: null,
       start: {date: null, time: false},
       end: {date: null, time: true},
@@ -221,6 +223,9 @@ export default class AddReservations extends Component {
   }
 
   _findBoats(): any {
+    this.setState({
+      currentMessage: 'Searching for boats…',
+    })
     const sd = this.state.start.date
     const ed = this.state.end.date
     const dc1 = encodeDate(this.state.start.date)
@@ -282,14 +287,21 @@ export default class AddReservations extends Component {
     return fetch('http://www.tradewindssailing.com/wsdl/Reserve-action.php', params)
       .then(fetchResults => {
         const html = fetchResults._bodyText;
+        const message = _.filter(html.split('\n'), line => {
+          if (line.startsWith('<h4 class="wsdlmsg">')) {
+            return /\>(.+)\>/.exec(line)[1]
+          }
+        })
+        if (message.length) {
+          this.props.setMessage(message[0])
+        } else {
+          this.props.setMessage('error cancelling boat')
+        }
         this.props.setReservations(html)
-        // TODO: Parse message for confirmation
-        // TODO: Clear the form and move to reservations page
-        this.setMessage('boat reserved')
       })
       .catch((error) => {
         console.log('error when reserving', error)
-        this.setMessage('error reserving boat')
+        this.props.setMessage('error reserving boat')
       })
   }
 
@@ -363,25 +375,24 @@ export default class AddReservations extends Component {
     }
 
     let picker = (
-      <View style={currentStyle.viewPlaceholder}/>
+      <Text style={currentStyle.viewPlaceholder}>
+        {this.state.currentMessage}
+      </Text>
     )
     if (this.state.availableBoats.length) {
       picker = (
-        <View>
-          <Text style={styles.dateTitle}>Select Boat</Text>
-          <PickerIOS
-            selectedValue={this.state.boatId}
-            style={{marginTop: -20, paddingBottom: 25}}
-            onValueChange={(boatId) => this.setState({boatId})}>
-            {this.state.availableBoats.map((boatData) => (
-              <PickerItemIOS
-                key={boatData.boatId}
-                value={boatData.boatId}
-                label={boatData.name}
-              />
-            ))}
-          </PickerIOS>
-        </View>
+        <PickerIOS
+          selectedValue={this.state.boatId}
+          style={{marginTop: -20, paddingBottom: 25}}
+          onValueChange={(boatId) => this.setState({boatId})}>
+          {this.state.availableBoats.map((boatData) => (
+            <PickerItemIOS
+              key={boatData.boatId}
+              value={boatData.boatId}
+              label={boatData.name}
+            />
+          ))}
+        </PickerIOS>
       )
     }
 
@@ -392,7 +403,10 @@ export default class AddReservations extends Component {
         <Text style={currentStyle.heading}>New reservation</Text>
         {this.getDateInput('Start Date', 'start')}
         {this.getDateInput('End Date', 'end')}
-        {picker}
+        <View>
+          <Text style={styles.dateTitle}>Select Boat</Text>
+          {picker}
+        </View>
         {iconButton}
       </View>
     )
