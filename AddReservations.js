@@ -7,7 +7,6 @@
 import React, {
   Component,
   PickerIOS,
-  PickerItemIOS,
   PropTypes,
   StyleSheet,
   Switch,
@@ -16,6 +15,8 @@ import React, {
   TouchableOpacity,
   View,
 } from 'react-native';
+
+var PickerItemIOS = PickerIOS.Item;
 
 import _ from 'lodash'
 import commonStyles from './common-styles'
@@ -28,12 +29,13 @@ let styles = StyleSheet.create({
     padding: 15,
     flex: 1,
     backgroundColor: '#eaf4be',
+    justifyContent: 'space-between',
   },
   modal: {
     justifyContent: 'center',
     alignItems: 'flex-start',
-    height: 400,
-    backgroundColor: 'white',
+    height: 450,
+    backgroundColor: "#e0e3ff"
   },
   spacer: {
     paddingBottom: 30,
@@ -63,11 +65,30 @@ let styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center'
   },
+  dateTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 5,
+    paddingBottom: 10,
+  },
   inputLabel: {
+    textDecorationLine: 'underline',
     fontSize: 18,
     marginBottom: 5,
     paddingBottom: 10,
   },
+  viewPlaceholder: {
+    height: 250,
+    backgroundColor: 'red'
+  },
+  hidden: {
+    height: 0,
+  },
+  boxStyle: {
+  },
+  switchStyle: {
+    marginBottom: 10,
+  }
 })
 
 function pad(n) {
@@ -115,26 +136,26 @@ export default class AddReservations extends Component {
     this.state = {
       availableBoats: [],
       boatId: null,
-      startDate: null,
-      endDate: null,
-      startTime: true,
-      endTime: false,
+      start: {date: null, time: false},
+      end: {date: null, time: true},
       modalOpen: false,
     };
   }
 
   open(varName: string) {
-    if (_.isNull(this.state[varName])) {
+    if (_.isNull(this.state[varName].date)) {
       // TODO: choose tomorrow if it's too late!
       let initialDate = new Date();
-      if (varName === 'endDate') {
-        if (_.isNull(this.state.startDate)) {
+      if (varName === 'end') {
+        if (_.isNull(this.state.start.date)) {
           return; // Do nothing if end is tapped but start not picked.
         }
-        initialDate.setDate(this.state.startDate.getDate() + 1);
+        initialDate.setDate(this.state.start.date.getDate() + 1);
       }
+      let existing = this.state[varName]
+      existing.date = initialDate
       this.setState({
-        [varName]: initialDate,
+        [varName]: existing,
         modalOpen: true,
       })
     }
@@ -147,11 +168,13 @@ export default class AddReservations extends Component {
   }
 
   onDateChange(varName: string, date: any) {
-    this.setState({[varName]: date})
+    let data = this.state[varName]
+    data.date = date;
+    this.setState({[varName]: data})
   }
 
   onClose() {
-    let complete = !_.isNull(this.state.startDate) && !_.isNull(this.state.endDate)
+    let complete = !_.isNull(this.state.start.date) && !_.isNull(this.state.end.date)
     if (complete) {
       this._findBoats()
     }
@@ -164,25 +187,26 @@ export default class AddReservations extends Component {
   }
 
   niceDate(varName: string): string {
-    if (_.isNull(this.state[varName])) {
+    if (_.isNull(this.state[varName].date)) {
       return 'Tap to pick date'
     }
-    return this.state[varName].toString().split(' ').splice(0,3).join(' ')
+    return this.state[varName].date.toString().split(' ').splice(0,3).join(' ')
   }
 
   getCalendarModal(varName: string) {
-    if (_.isNull(this.state[varName])) {
+    if (_.isNull(this.state[varName].date)) {
       return null
     }
     return (
       <Modal
         style={styles.modal}
+        position={"top"}
         ref={`${varName}-modal`}
         onClosed={this.onClose.bind(this)}
         onOpened={this.onOpen.bind(this)}
       >
         <CalendarPicker
-          selectedDate={this.state[varName]}
+          selectedDate={this.state[varName].date}
           onDateChange={this.onDateChange.bind(this, varName)}
         />
         <IconButton
@@ -198,12 +222,12 @@ export default class AddReservations extends Component {
   }
 
   _findBoats(): any {
-    const sd = this.state.startDate
-    const ed = this.state.endDate
-    const dc1 = encodeDate(this.state.startDate)
-    const dc2 = encodeDate(this.state.endDate)
-    const time1 = encodeURIComponent(this.state.startTime ? '09:00:00' : '21:00:00')
-    const time2 = encodeURIComponent(this.state.endTime ? '09:00:00' : '21:00:00')
+    const sd = this.state.start.date
+    const ed = this.state.end.date
+    const dc1 = encodeDate(this.state.start.date)
+    const dc2 = encodeDate(this.state.end.date)
+    const time1 = encodeURIComponent(this.state.start.time ? '21:00:00' : '09:00:00')
+    const time2 = encodeURIComponent(this.state.end.time ? '21:00:00' : '09:00:00')
 
     const params = {
       method: 'POST',
@@ -240,9 +264,9 @@ export default class AddReservations extends Component {
       'January', 'February', 'March', 'April', 'May', 'June', 'July',
       'August', 'September', 'October', 'November', 'December'
     ]
-    const sd = this.state.startDate
+    const sd = this.state.start.date
     let start = `${MONTH_NAME[sd.getMonth()]}+${sd.getDate()}+${sd.getFullYear()}`
-    if (this.state.startTime) {
+    if (this.state.start.time) {
       start += '+9+AM'
     } else {
       start += '+9+PM'
@@ -270,69 +294,105 @@ export default class AddReservations extends Component {
       })
   }
 
-  getDateInput(label: string, dateVarName: string, timeVarName: string) {
+  setTime(varName: string, newTime: bool) {
+    let existing = this.state[varName]
+    existing.time = newTime
+    this.setState({[varName]: existing})
+  }
+
+  getDateInput(label: string, varName: string) {
+    if (this.state.modalOpen) {
+      return null
+    }
     return (
       <View style={styles.inputSection}>
-        <Text style={styles.inputLabel}>{label}</Text>
+        <Text style={styles.dateTitle}>{label}</Text>
         <View style={styles.dateSection}>
-          <TouchableOpacity onPress={this.open.bind(this, dateVarName)}>
+          <TouchableOpacity onPress={this.open.bind(this, varName)}>
             <Text style={styles.inputLabel}>
-              {this.niceDate(dateVarName)}
+              {this.niceDate(varName)}
             </Text>
           </TouchableOpacity>
-          <View>
+          <View style={styles.boxStyle}>
             <Switch
-              onValueChange={(value) => this.setState({[timeVarName]: value})}
-              style={{marginBottom: 10}}
-              value={this.state[timeVarName]}
+              onValueChange={this.setTime.bind(this, varName)}
+              style={styles.switchStyle}
+              value={this.state[varName].time}
             />
-            <Text style={{fontSize: 10}}>{this.state[timeVarName] ? 'Morning' : 'Evening'}</Text>
+            <Text style={{fontSize: 10}}>{this.state[varName].time ? 'Evening' : 'Morning'}</Text>
           </View>
         </View>
       </View>
     )
   }
 
+  getStyles(): any {
+    if (this.state.modalOpen) {
+      return {
+        buttonStyle: styles.hidden,
+        viewPlaceholder: styles.hidden,
+        container: styles.hidden,
+        heading: styles.hidden,
+        inputSection: styles.hidden,
+      }
+    } else {
+      return {
+        buttonStyle: styles.buttonStyle,
+        viewPlaceholder: styles.viewPlaceholder,
+        container: styles.container,
+        heading: styles.heading,
+        inputSection: styles.inputSection,
+      }
+    }
+  }
+
   render() {
-    let iconButton = null
+    const currentStyle = this.getStyles()
+    let active = !_.isNull(this.state.start.date) && !_.isNull(this.state.end.date)
+    let iconButton
     if (!this.state.modalOpen) {
-      let active = !_.isNull(this.state.startDate) && !_.isNull(this.state.endDate)
       iconButton = (
         <IconButton
           active={active}
           color={'green'}
           iconName={'chevron-right'}
           iconFamily={'material'}
-          buttonStyle={styles.buttonStyle}
+          buttonStyle={currentStyle.buttonStyle}
           onPress={this._reserveBoats.bind(this)}
         />
       )
     }
 
-    let picker = null
+    let picker = (
+      <View style={currentStyle.viewPlaceholder}/>
+    )
     if (this.state.availableBoats.length) {
       picker = (
-        <PickerIOS
-          selectedValue={this.state.boatId}
-          onValueChange={(boatId) => this.setState({boatId})}>
-          {this.state.availableBoats.map((boatData) => (
-            <PickerItemIOS
-              key={boatData.boatId}
-              value={boatData.boatId}
-              label={boatData.name}
-            />
-          ))}
-        </PickerIOS>
+        <View>
+          <Text style={styles.dateTitle}>Select Boat</Text>
+          <PickerIOS
+            selectedValue={this.state.boatId}
+            style={{marginTop: -20, paddingBottom: 25}}
+            onValueChange={(boatId) => this.setState({boatId})}>
+            {this.state.availableBoats.map((boatData) => (
+              <PickerItemIOS
+                key={boatData.boatId}
+                value={boatData.boatId}
+                label={boatData.name}
+              />
+            ))}
+          </PickerIOS>
+        </View>
       )
     }
 
     return (
-      <View style={styles.container}>
-        {this.getCalendarModal('startDate')}
-        {this.getCalendarModal('endDate')}
-        <Text style={styles.heading}>New reservation</Text>
-        {this.getDateInput('Start Date', 'startDate', 'startTime')}
-        {this.getDateInput('End Date', 'endDate', 'endTime')}
+      <View style={currentStyle.container}>
+        {this.getCalendarModal('start')}
+        {this.getCalendarModal('end')}
+        <Text style={currentStyle.heading}>New reservation</Text>
+        {this.getDateInput('Start Date', 'start')}
+        {this.getDateInput('End Date', 'end')}
         {picker}
         {iconButton}
       </View>
