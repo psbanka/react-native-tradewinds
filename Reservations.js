@@ -148,16 +148,43 @@ export default class Reservations extends Component {
     );
   }
 
+  emptyState() {
+    return (
+      <View>
+        <Text style={{color: '#7c3939', fontSize: 20, fontWeight: 'bold', paddingLeft: 30}}>
+          You have no reservations
+        </Text>
+        <View style={{paddingTop: 50, flex: 1, justifyContent: 'space-between', flexDirection: 'row'}}>
+          <View/>
+            <View>
+              <Text style={{paddingTop: 30, width: commonStyles.deviceWidth * 0.5, fontSize: 20, lineHeight: 46, fontStyle: 'italic'}} >
+                A ship in harbor is safe, but that is not what ships are built for.
+              </Text>
+              <Text style={{width: commonStyles.deviceWidth * 0.5, fontSize: 20, lineHeight: 46, textAlign: 'right'}}>
+                    —J. A. Shedd
+              </Text>
+            </View>
+          <View/>
+        </View>
+      </View>
+    )
+  }
+
   render() {
     let renderRow = this.renderRow.bind(this)
-    let resultsList = (
-      <ListView
-        automaticallyAdjustContentInsets={false}
-        dataSource={this.state.dataSource}
-        renderRow={renderRow}
-        style={styles.resultsList}
-      />
-    );
+    let resultsList
+    if (this.props.reservations && this.props.reservations.length) {
+      resultsList = (
+        <ListView
+          automaticallyAdjustContentInsets={false}
+          dataSource={this.state.dataSource}
+          renderRow={renderRow}
+          style={styles.resultsList}
+        />
+      )
+    } else {
+      resultsList = this.emptyState()
+    }
     return (
       <ScrollView style={styles.container}>
         <Text style={styles.heading}>{"Reservations"}</Text>

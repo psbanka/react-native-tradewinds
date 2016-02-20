@@ -79,7 +79,6 @@ let styles = StyleSheet.create({
   },
   viewPlaceholder: {
     height: 250,
-    backgroundColor: 'red'
   },
   hidden: {
     height: 0,
@@ -144,8 +143,8 @@ export default class AddReservations extends Component {
 
   open(varName: string) {
     if (_.isNull(this.state[varName].date)) {
-      // TODO: choose tomorrow if it's too late!
       let initialDate = new Date();
+      initialDate.setDate(initialDate.getDate() + 1); // Default to tomorrow
       if (varName === 'end') {
         if (_.isNull(this.state.start.date)) {
           return; // Do nothing if end is tapped but start not picked.
