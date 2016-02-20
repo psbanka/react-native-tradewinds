@@ -15,7 +15,7 @@ import commonStyles from './common-styles'
 import AddReservations from './AddReservations'
 import Reservations from './Reservations'
 import CustomTabBar from './CustomTabBar'
-var ScrollableTabView = require('react-native-scrollable-tab-view');
+const ScrollableTabView = require('react-native-scrollable-tab-view');
 
 /****************
  *  Main class  *

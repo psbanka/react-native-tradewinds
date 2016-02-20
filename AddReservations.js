@@ -5,6 +5,7 @@
  */
 
 import React, {
+  AlertIOS,
   Component,
   PickerIOS,
   PropTypes,
@@ -16,7 +17,7 @@ import React, {
   View,
 } from 'react-native';
 
-var PickerItemIOS = PickerIOS.Item;
+const PickerItemIOS = PickerIOS.Item;
 
 import _ from 'lodash'
 import commonStyles from './common-styles'
@@ -253,8 +254,8 @@ export default class AddReservations extends Component {
         }
        })
       .catch((error) => {
+        AlertIOS.alert( 'Error', 'Cannot find any boats' );
         console.log('error retrieving bosts', error);
-        this.props.setMessage('error retrieving boats')
       })
   }
 
@@ -287,21 +288,25 @@ export default class AddReservations extends Component {
     return fetch('http://www.tradewindssailing.com/wsdl/Reserve-action.php', params)
       .then(fetchResults => {
         const html = fetchResults._bodyText;
-        const message = _.filter(html.split('\n'), line => {
+        const message = _.filter(_.map(html.split('\n'), line => {
           if (line.startsWith('<h4 class="wsdlmsg">')) {
-            return /\>(.+)\>/.exec(line)[1]
+            return /\>(.+)\</.exec(line)[1]
           }
-        })
+        }))
         if (message.length) {
-          this.props.setMessage(message[0])
+          let text = message[0]
+          if (text.toLowerCase().indexOf('added')) {
+            AlertIOS.alert('Success', text);
+          } else {
+            AlertIOS.alert('Error', text);
+          }
         } else {
-          this.props.setMessage('error cancelling boat')
+          AlertIOS.alert('Error', 'Could not reserve boat');
         }
         this.props.setReservations(html)
       })
       .catch((error) => {
-        console.log('error when reserving', error)
-        this.props.setMessage('error reserving boat')
+        AlertIOS.alert('Error', error);
       })
   }
 

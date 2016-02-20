@@ -5,6 +5,7 @@
  */
 
 import React, {
+  AlertIOS,
   Component,
   ListView,
   StyleSheet,
@@ -98,15 +99,20 @@ export default class Reservations extends Component {
       .then(cancelResults => {
         const html = cancelResults._bodyText;
         if (cancelResults.status = 200) {
-          const message = _.filter(html.split('\n'), line => {
+          const message = _.filter(_.map(html.split('\n'), line => {
             if (line.startsWith('<h4 class="wsdlmsg">')) {
-              return /\>(.+)\>/.exec(line)[1]
+              return /\>(.+)\</.exec(line)[1]
             }
-          })
+          }))
           if (message.length) {
-            this.props.setMessage(message[0])
+            let text = message[0]
+            if (text.toLowerCase().indexOf('cancelled')) {
+              AlertIOS.alert('Success', text);
+            } else {
+              AlertIOS.alert('Error', text);
+            }
           } else {
-            this.props.setMessage('error cancelling boat')
+            AlertIOS.alert('Error', 'error cancelling boat');
           }
         }
         this.props.setReservations(html)
