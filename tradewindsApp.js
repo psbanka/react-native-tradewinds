@@ -13,7 +13,7 @@ class TradewindsApp extends Component {
     return (
         <Tradewinds
           busy={this.props.busy}
-          username={this.props.userData.username}
+          userData={this.props.userData}
           reservations={this.props.reservations}
           {...this.props.actions}
         />

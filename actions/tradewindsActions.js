@@ -6,8 +6,9 @@ import _ from 'lodash';
 const CookieManager = require('react-native-cookies');
 
 type UserData = {
-  username: string,
-  password: string,
+  username: ?string,
+  password: ?string,
+  error?: string,
 }
 
 const urls = {
@@ -95,7 +96,7 @@ function getExpiry() {
   return `${exDate.getUTCFullYear()}-${exDate.getUTCMonth()}-${exDate.getUTCDate()}T12:30:00.00-05:00`;
 }
 
-export function setCookie(newCookie: any) : any {
+export function setCookie(newCookie: any, userData: UserData, rememberMe: bool) : any {
   return function(dispatch) {
     CookieManager.set(newCookie, (err, res) => {
       const params = {
@@ -103,28 +104,37 @@ export function setCookie(newCookie: any) : any {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
-        body: 'userid=8637900&pwd=4zBDkV1Agi&Submit=Submit',
+        body: `userid=${userData.username}&pwd=${userData.password}&Submit=Submit`,
       };
 
       return fetch('http://www.tradewindssailing.com/wsdl/Logon-action.php', params)
-        .then(logonAction => {
-          return fetch('http://www.tradewindssailing.com/wsdl/Reservations.php')
-            .then(reservationResponse => {
-              const html = reservationResponse._bodyText;
-              dispatch(setReservations(html))
-              dispatch(clearBusy());
-            });
+        .then(logonResponse => {
+          if (logonResponse.url === 'http://www.tradewindssailing.com/wsdl/Logon.php') {
+            console.log('totally setting error right now')
+            dispatch(setUser({username: null, password: null, cookie: null, error: 'Bad username or password'}));
+            dispatch(clearBusy());
+          } else {
+            if (rememberMe) {
+              saveUserData(userData)
+            }
+            return fetch('http://www.tradewindssailing.com/wsdl/Reservations.php')
+              .then(reservationResponse => {
+                const html = reservationResponse._bodyText;
+                dispatch(setReservations(html))
+                dispatch(clearBusy());
+              });
+          }
         })
         .catch(error => {
-          console.log('error encountered setting cookie: ', error);
-          // TODO: Return user to login screen
+          dispatch(setUser({username: null, password: null, cookie: null, error: 'Bad username or password'}));
+          dispatch(clearBusy());
+          console.log('error encountered logging in', error);
         });
     });
   }
 }
 
 function saveUserData(userData: UserData): Promise {
-  debugger
   return Promise.all(_.map(userDataKeys, (key) => {
     let fullKey = '@tradewinds:' + key;
     console.log('setting', fullKey, userData[key])
@@ -136,12 +146,6 @@ function saveUserData(userData: UserData): Promise {
 export function loginUser(userData: UserData, rememberMe: bool) : any {
   return function(dispatch) {
 
-    // userData.password = '4zBDkV1Agi';
-    // userData.username = '8637900';
-
-    if (rememberMe) {
-      saveUserData(userData)
-    }
     dispatch(setBusy());
     dispatch(setUser(userData))
 
@@ -161,7 +165,7 @@ export function loginUser(userData: UserData, rememberMe: bool) : any {
             version: '1',
             expiration: '2016-05-30T12:30:00.00-05:00'
           }
-          dispatch(setCookie(newCookie))
+          dispatch(setCookie(newCookie, userData, rememberMe))
         });
     });
   }

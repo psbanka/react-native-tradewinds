@@ -13,7 +13,7 @@ const initialState = {
   userData: {
     username: null,
     password: null,
-    cookie: null,
+    error: '',
   },
   reservations: [],
   // reservations: null,

@@ -71,6 +71,16 @@ const styles = StyleSheet.create({
         fontSize: 24,
         marginBottom: 5,
     },
+    error: {
+      fontSize: 16,
+      backgroundColor: '#7c2222',
+      fontWeight: 'bold',
+      color: 'white',
+      width: commonStyles.deviceWidth * 0.82,
+      textAlign: 'center',
+      marginTop: 10,
+      marginBottom: 10,
+    },
     inputSection: {
         flexDirection: 'column',
         height: 70,
@@ -148,58 +158,64 @@ export default class Login extends Component {
     }
 
     render() {
-        return (
-            <ScrollView
-                    contentInset={{top: -50}}
-                    scrollEventThrottle={200}
-                    style={styles.container}
-            >
-                <Text style={styles.heading}>Log in to Tradewinds</Text>
-                <View style={styles.inputSection}>
-                    <Text style={styles.inputLabel}>Username</Text>
-                    <TextInput
-                        autoCapitalize={'none'}
-                        autoCorrect={false}
-                        autoFocus={true}
-                        onChange={this.usernameInput.bind(this)}
-                        ref="usernameInput"
-                        style={styles.inputWidget}
-                        value={this.state.userData.username}
-                    />
-                </View>
-                <View style={styles.inputSection}>
-                    <Text style={styles.inputLabel}>Password</Text>
-                    <TextInput
-                        autoCorrect={false}
-                        onChange={this.passwordInput.bind(this)}
-                        password={true}
-                        ref="passwordInput"
-                        style={styles.inputWidget}
-                        value={this.state.userData.password}
-                    />
-                </View>
-                <View style={styles.inputSection}>
-                    <Text style={styles.inputLabel}>Remember me?</Text>
-                    <Switch
-                        onValueChange={(value) => this.setState({rememberMe: value})}
-                        style={{marginBottom: 10, marginTop: 10}}
-                        value={this.state.rememberMe}
-                    />
-                </View>
-                <IconButton
-                    active={this.state.submitEnabled}
-                    color={'green'}
-                    iconName={'chevron-right'}
-                    iconFamily={'material'}
-                    buttonStyle={styles.buttonStyle}
-                    onPress={this.handleSubmit.bind(this, null)}
-                />
-            </ScrollView>
-        );
+      let errorMessage = null
+      if (this.props.error) {
+        errorMessage = (<Text style={styles.error}>{this.props.error}</Text>)
+      }
+      return (
+        <ScrollView
+          contentInset={{top: -50}}
+          scrollEventThrottle={200}
+          style={styles.container}
+        >
+          <Text style={styles.heading}>Log in to Tradewinds</Text>
+          {errorMessage}
+          <View style={styles.inputSection}>
+            <Text style={styles.inputLabel}>Username</Text>
+            <TextInput
+              autoCapitalize={'none'}
+              autoCorrect={false}
+              autoFocus={true}
+              onChange={this.usernameInput.bind(this)}
+              ref="usernameInput"
+              style={styles.inputWidget}
+              value={this.state.userData.username}
+            />
+          </View>
+          <View style={styles.inputSection}>
+            <Text style={styles.inputLabel}>Password</Text>
+            <TextInput
+              autoCorrect={false}
+              onChange={this.passwordInput.bind(this)}
+              password={true}
+              ref="passwordInput"
+              style={styles.inputWidget}
+              value={this.state.userData.password}
+            />
+          </View>
+          <View style={styles.inputSection}>
+            <Text style={styles.inputLabel}>Remember me?</Text>
+            <Switch
+              onValueChange={(value) => this.setState({rememberMe: value})}
+              style={{marginBottom: 10, marginTop: 10}}
+              value={this.state.rememberMe}
+            />
+          </View>
+          <IconButton
+            active={this.state.submitEnabled}
+            color={'green'}
+            iconName={'chevron-right'}
+            iconFamily={'material'}
+            buttonStyle={styles.buttonStyle}
+            onPress={this.handleSubmit.bind(this, null)}
+          />
+        </ScrollView>
+      )
     }
 }
 
 Login.displayName = 'Login';
 Login.propTypes = {
     onSubmit: React.PropTypes.func.isRequired,
+    error: React.PropTypes.string,
 };
