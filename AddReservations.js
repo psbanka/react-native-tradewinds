@@ -134,6 +134,7 @@ function parseAvailableBoats(html) {
 export default class AddReservations extends Component {
   constructor(props: any) {
     super(props);
+    this.props.changeView()
     this.state = {
       availableBoats: [],
       currentMessage: 'Please pick dates first',
@@ -297,6 +298,15 @@ export default class AddReservations extends Component {
           let text = message[0]
           if (text.toLowerCase().indexOf('added')) {
             AlertIOS.alert('Success', text);
+            this.setState({
+              availableBoats: [],
+              currentMessage: 'Please pick dates first',
+              boatId: null,
+              start: {date: null, time: false},
+              end: {date: null, time: true},
+              modalOpen: false,
+            })
+            this.props.changeView(0)
           } else {
             AlertIOS.alert('Error', text);
           }
@@ -421,4 +431,5 @@ export default class AddReservations extends Component {
 AddReservations.displayName = 'AddReservations';
 AddReservations.propTypes = {
   setReservations: PropTypes.func.isRequired,
+  //changeView: PropTypes.func.isRequred,
 }

@@ -35,9 +35,16 @@ export default class MainMenu extends Component {
     super(props);
   }
 
+  changeView(id: number) {
+    const tabView = this.refs['tabview']
+    if (tabView) {
+      tabView.goToPage(id)
+    }
+  }
+
   render() {
     return (
-      <ScrollableTabView renderTabBar={() => <CustomTabBar/>}>
+      <ScrollableTabView ref='tabview' renderTabBar={() => <CustomTabBar/>}>
         <Reservations
           key={'reorder'}
           reservations={this.props.reservations}
@@ -48,6 +55,7 @@ export default class MainMenu extends Component {
           key={'add-circle'}
           tabLabel={'add-circle'}
           setReservations={this.props.setReservations}
+          changeView={this.changeView.bind(this)}
         />
       </ScrollableTabView>
     )
