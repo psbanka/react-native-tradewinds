@@ -29,10 +29,10 @@ export function clearBusy(): any {
   };
 }
 
-export function setUser(savedUserData: any): any {
+export function setUser(userData: any): any {
   return {
     type: types.SET_USER_DATA,
-    savedUserData,
+    userData,
   };
 }
 
@@ -40,13 +40,6 @@ export function setReservations(html: string): any {
   return {
     type: types.SET_RESERVATIONS,
     reservationResponse: html,
-  }
-}
-
-export function setMessage(message: string): any {
-  return {
-    type: types.SET_MESSAGE,
-    message,
   }
 }
 
@@ -123,8 +116,10 @@ export function setCookie(newCookie: any) : any {
 export function loginUser(userData: any) : any {
   return function(dispatch) {
 
-    userData.password = '4zBDkV1Agi';
-    userData.username = '8637900';
+    // userData.password = '4zBDkV1Agi';
+    // userData.username = '8637900';
+
+    dispatch(setUser(userData))
 
     fetch('http://www.tradewindssailing.com/wsdl/Logon.php')
       .then(output => {
@@ -147,3 +142,25 @@ export function loginUser(userData: any) : any {
     });
   }
 };
+
+export function logoutUser(): any {
+  return function(dispatch) {
+    // clear cookies
+    CookieManager.clearAll((err, res) => {
+      console.log('cookies cleared!');
+      console.log(err);
+      console.log(res);
+    });
+    Promise.all(_.map(userDataKeys, (key) => {
+        let fullKey = '@tradewinds:' + key;
+        return AsyncStorage.removeItem(fullKey)
+    }))
+    .then(output => {
+      console.log('clearing user data')
+      dispatch(setUser({username: null, password: null, cookie: null}));
+    })
+    .catch(error => {
+      console.log('error encountered:', error)
+    })
+  }
+}

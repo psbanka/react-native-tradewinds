@@ -15,6 +15,7 @@ import commonStyles from './common-styles'
 import AddReservations from './AddReservations'
 import Reservations from './Reservations'
 import CustomTabBar from './CustomTabBar'
+import Settings from './Settings'
 const ScrollableTabView = require('react-native-scrollable-tab-view');
 
 /****************
@@ -56,6 +57,12 @@ export default class MainMenu extends Component {
           tabLabel={'add-circle'}
           setReservations={this.props.setReservations}
           changeView={this.changeView.bind(this)}
+        />
+        <Settings
+          key={'account-circle'}
+          tabLabel={'account-circle'}
+          logoutUser={this.props.logoutUser}
+          username={this.props.username}
         />
       </ScrollableTabView>
     )

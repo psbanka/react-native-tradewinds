@@ -4,9 +4,6 @@ import Tradewinds from './Tradewinds';
 import * as tradewindsActions from './actions/tradewindsActions';
 import { connect } from 'react-redux';
 
-// @connect(state => ({
-//   state: state.counter
-// }))
 class TradewindsApp extends Component {
   constructor(props) {
     super(props);
@@ -16,6 +13,7 @@ class TradewindsApp extends Component {
     return (
         <Tradewinds
           busy={this.props.busy}
+          username={this.props.userData.username}
           reservations={this.props.reservations}
           {...this.props.actions}
         />

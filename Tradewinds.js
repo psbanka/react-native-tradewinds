@@ -4,9 +4,7 @@ import Login from './Login';
 import MainMenu from './MainMenu';
 import _ from 'lodash'
 
-// @connect(state => ({
-//   state: state.counter
-// }))
+
 export default class Tradewinds extends Component {
   constructor(props) {
     super(props);
@@ -22,15 +20,17 @@ export default class Tradewinds extends Component {
         <BusyIndicator/>
       );
     }
-    if (_.isNull(this.props.reservations)) {
+    if (_.isNull(this.props.username)) {
       return (
         <Login onSubmit={this.props.loginUser}/>
       );
     } else {
         return (
           <MainMenu
+            username={this.props.username}
             reservations={this.props.reservations}
             setReservations={this.props.setReservations}
+            logoutUser={this.props.logoutUser}
           />
         )
     }

@@ -98,11 +98,6 @@ export default function counter(state = initialState, action = {}) {
         ...state,
         reservations,
       };
-    case types.SET_MESSAGE:
-      return {
-        ...state,
-        message: action.message,
-      };
     default:
       return state;
   }
