@@ -79,7 +79,8 @@ let styles = StyleSheet.create({
     paddingBottom: 10,
   },
   viewPlaceholder: {
-    color: '#a38c8c',
+    color: '#d60000',
+    fontSize: 14,
     height: 230,
   },
   hidden: {
@@ -151,9 +152,10 @@ export default class AddReservations extends Component {
       initialDate.setDate(initialDate.getDate() + 1); // Default to tomorrow
       if (varName === 'end') {
         if (_.isNull(this.state.start.date)) {
-          return; // Do nothing if end is tapped but start not picked.
+          AlertIOS.alert('Error', 'Please pick start date first');
+          return;
         }
-        initialDate.setDate(this.state.start.date.getDate() + 1);
+        initialDate.setDate(this.state.start.date.getDate()); // assume return on same day
       }
       let existing = this.state[varName]
       existing.date = initialDate
@@ -243,14 +245,22 @@ export default class AddReservations extends Component {
       body: `dc1=${dc1}&time1=${time1}&dc2=${dc2}&time2=${time2}&senddata=Show+me+available+boats`,
     };
 
+    this.props.setWorking('find-boats')
     fetch('http://www.tradewindssailing.com/wsdl/ReservationsAvailable.php', params)
       .then(fetchResults => {
+        this.props.clearBusy()
         const html = fetchResults._bodyText;
         const availableBoats = parseAvailableBoats(html)
         if (availableBoats.length) {
           this.setState({
             availableBoats,
             boatId: availableBoats[0].boatId
+          })
+        } else {
+          const message = 'No boats available for that time interval.'
+          AlertIOS.alert('Error', message);
+          this.setState({
+            currentMessage: message,
           })
         }
        })
@@ -273,9 +283,9 @@ export default class AddReservations extends Component {
     const sd = this.state.start.date
     let start = `${MONTH_NAME[sd.getMonth()]}+${sd.getDate()}+${sd.getFullYear()}`
     if (this.state.start.time) {
-      start += '+9+AM'
-    } else {
       start += '+9+PM'
+    } else {
+      start += '+9+AM'
     }
 
     const params = {
@@ -286,8 +296,10 @@ export default class AddReservations extends Component {
       body: `BoatID=${boat.boatId}&charterdays=${boat.charterdays}&time=${boat.time}&start=${start}&BoatSize=${boat.boatSize}`,
     };
 
+    this.props.setWorking('reserve-boat')
     return fetch('http://www.tradewindssailing.com/wsdl/Reserve-action.php', params)
       .then(fetchResults => {
+        this.props.clearBusy()
         const html = fetchResults._bodyText;
         const message = _.filter(_.map(html.split('\n'), line => {
           if (line.startsWith('<h4 class="wsdlmsg">')) {
@@ -324,6 +336,10 @@ export default class AddReservations extends Component {
     let existing = this.state[varName]
     existing.time = newTime
     this.setState({[varName]: existing})
+    let complete = !_.isNull(this.state.start.date) && !_.isNull(this.state.end.date)
+    if (complete) {
+      this._findBoats()
+    }
   }
 
   getDateInput(label: string, varName: string) {
@@ -345,7 +361,7 @@ export default class AddReservations extends Component {
               style={styles.switchStyle}
               value={this.state[varName].time}
             />
-            <Text style={{fontSize: 10}}>{this.state[varName].time ? 'Evening' : 'Morning'}</Text>
+            <Text style={{fontSize: 12, textAlign: 'center'}}>{this.state[varName].time ? 'Evening' : 'Morning'}</Text>
           </View>
         </View>
       </View>
@@ -372,6 +388,10 @@ export default class AddReservations extends Component {
     }
   }
 
+  pressPlaceholder() {
+    AlertIOS.alert('Error', 'Please pick dates first');
+  }
+
   render() {
     const currentStyle = this.getStyles()
     let active = !_.isNull(this.state.start.date) && !_.isNull(this.state.end.date)
@@ -385,14 +405,17 @@ export default class AddReservations extends Component {
           iconFamily={'material'}
           buttonStyle={currentStyle.buttonStyle}
           onPress={this._reserveBoats.bind(this)}
+          working={this.props.working === 'find-boats' || this.props.working === 'reserve-boat'}
         />
       )
     }
 
     let picker = (
-      <Text style={currentStyle.viewPlaceholder}>
-        {this.state.currentMessage}
-      </Text>
+      <TouchableOpacity onPress={this.pressPlaceholder}>
+        <Text style={currentStyle.viewPlaceholder}>
+          {this.state.currentMessage}
+        </Text>
+      </TouchableOpacity>
     )
     if (this.state.availableBoats.length) {
       picker = (

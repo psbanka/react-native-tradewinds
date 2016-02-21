@@ -20,17 +20,20 @@ export default class Tradewinds extends Component {
         <BusyIndicator/>
       );
     }
-    if (_.isNull(this.props.userData.username)) {
+    if (_.isNull(this.props.userData.username) || _.isNull(this.props.reservations)) {
       return (
-        <Login onSubmit={this.props.loginUser} error={this.props.userData.error}/>
+        <Login onSubmit={this.props.loginUser} error={this.props.userData.error} working={this.props.working}/>
       );
     } else {
         return (
           <MainMenu
+            working={this.props.working}
             username={this.props.userData.username}
             reservations={this.props.reservations}
             setReservations={this.props.setReservations}
             logoutUser={this.props.logoutUser}
+            setWorking={this.props.setWorking}
+            clearBusy={this.props.clearBusy}
           />
         )
     }

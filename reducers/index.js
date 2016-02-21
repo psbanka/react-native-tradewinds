@@ -15,8 +15,8 @@ const initialState = {
     password: null,
     error: '',
   },
-  reservations: [],
-  // reservations: null,
+  reservations: null,
+  working: '',
 };
 
 /**
@@ -85,7 +85,8 @@ export default function counter(state = initialState, action = {}) {
     case types.CLEAR_BUSY:
       return {
         ...state,
-        busy: false
+        busy: false,
+        working: '',
       };
     case types.SET_USER_DATA:
       return {
@@ -93,10 +94,18 @@ export default function counter(state = initialState, action = {}) {
         userData: action.userData
       };
     case types.SET_RESERVATIONS:
-      const reservations = parseReservations(action.reservationResponse)
+      let reservations = null
+      if (!_.isNull(action.reservationResponse)) {
+        reservations = parseReservations(action.reservationResponse)
+      }
       return {
         ...state,
         reservations,
+      };
+    case types.SET_WORKING:
+      return {
+        ...state,
+        working: action.activity,
       };
     default:
       return state;

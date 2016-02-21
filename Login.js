@@ -203,6 +203,7 @@ export default class Login extends Component {
           </View>
           <IconButton
             active={this.state.submitEnabled}
+            working={this.props.working === 'login'}
             color={'green'}
             iconName={'chevron-right'}
             iconFamily={'material'}

@@ -95,8 +95,10 @@ export default class Reservations extends Component {
       body: `begins=${begins}&venuecode=${r.venuecode}&boatsize=${r.boatsize}&boatcode=${r.boatcode}`,
     };
 
+    this.props.setWorking(`cancel:${index}`)
     fetch('http://www.tradewindssailing.com/wsdl/Reservations-action-cancel.php', params)
       .then(cancelResults => {
+        this.props.clearBusy()
         const html = cancelResults._bodyText;
         if (cancelResults.status = 200) {
           const message = _.filter(_.map(html.split('\n'), line => {
@@ -112,14 +114,14 @@ export default class Reservations extends Component {
               AlertIOS.alert('Error', text);
             }
           } else {
-            AlertIOS.alert('Error', 'error cancelling boat');
+            AlertIOS.alert('Error', 'error cancelling boat')
           }
         }
         this.props.setReservations(html)
        })
       .catch((error) => {
-        this.props.setMessage('error cancelling boat')
-        console.log('error cancelling boat', error);
+        console.log('error cancelling boat', error)
+        AlertIOS.alert('error cancelling boat')
       })
   }
 
@@ -132,6 +134,7 @@ export default class Reservations extends Component {
       rowStyle = styles.rowContainerEven;
     }
     this.rowIndex += 1;
+    const working = this.props.working === `cancel:${this.rowIndex}`
     return (
       <View>
         <View style={[styles.row, rowStyle]}>
@@ -148,6 +151,7 @@ export default class Reservations extends Component {
             iconSize={30}
             buttonStyle={styles.buttonStyle}
             onPress={this._cancelBoat.bind(this, this.rowIndex)}
+            working={working}
           />
         </View>
       </View>
@@ -158,7 +162,7 @@ export default class Reservations extends Component {
     return (
       <View>
         <Text style={{color: '#7c3939', fontSize: 20, fontWeight: 'bold', paddingLeft: 20}}>
-          You have no reservations
+          You have no reservations (yet!)
         </Text>
         <View style={{paddingTop: 50, flex: 1, justifyContent: 'space-between', flexDirection: 'row'}}>
           <View/>

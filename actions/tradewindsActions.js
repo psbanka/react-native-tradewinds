@@ -42,12 +42,20 @@ export function setUser(userData: UserData): any {
   };
 }
 
-export function setReservations(html: string): any {
+export function setReservations(html: ?string): any {
   return {
     type: types.SET_RESERVATIONS,
     reservationResponse: html,
   }
 }
+
+export function setWorking(activity: string): any {
+  return {
+    type: types.SET_WORKING,
+    activity,
+  }
+}
+
 
 /*********************************************************************
  *                           Async actions                           *
@@ -75,7 +83,6 @@ export function readUserFromStorage() : any {
         console.log('no saved user data')
         dispatch(clearBusy());
       } else {
-        console.log('logging in user', savedUserData)
         dispatch(setUser(savedUserData));
         dispatch(loginUser(savedUserData, false));
       }
@@ -110,7 +117,6 @@ export function setCookie(newCookie: any, userData: UserData, rememberMe: bool) 
       return fetch('http://www.tradewindssailing.com/wsdl/Logon-action.php', params)
         .then(logonResponse => {
           if (logonResponse.url === 'http://www.tradewindssailing.com/wsdl/Logon.php') {
-            console.log('totally setting error right now')
             dispatch(setUser({username: null, password: null, cookie: null, error: 'Bad username or password'}));
             dispatch(clearBusy());
           } else {
@@ -128,7 +134,6 @@ export function setCookie(newCookie: any, userData: UserData, rememberMe: bool) 
         .catch(error => {
           dispatch(setUser({username: null, password: null, cookie: null, error: 'Bad username or password'}));
           dispatch(clearBusy());
-          console.log('error encountered logging in', error);
         });
     });
   }
@@ -137,7 +142,6 @@ export function setCookie(newCookie: any, userData: UserData, rememberMe: bool) 
 function saveUserData(userData: UserData): Promise {
   return Promise.all(_.map(userDataKeys, (key) => {
     let fullKey = '@tradewinds:' + key;
-    console.log('setting', fullKey, userData[key])
     return AsyncStorage.setItem(fullKey, userData[key])
   }))
 
@@ -146,7 +150,8 @@ function saveUserData(userData: UserData): Promise {
 export function loginUser(userData: UserData, rememberMe: bool) : any {
   return function(dispatch) {
 
-    dispatch(setBusy());
+    // dispatch(setBusy());
+    dispatch(setWorking('login'))
     dispatch(setUser(userData))
 
     fetch('http://www.tradewindssailing.com/wsdl/Logon.php')
@@ -175,19 +180,19 @@ export function logoutUser(): any {
   return function(dispatch) {
     // clear cookies
     CookieManager.clearAll((err, res) => {
-      console.log('cookies cleared!');
-      console.log(err);
-      console.log(res);
+      console.log('clearing cookies', err, res);
     });
     Promise.all(_.map(userDataKeys, (key) => {
         let fullKey = '@tradewinds:' + key;
         return AsyncStorage.removeItem(fullKey)
     }))
     .then(output => {
-      console.log('clearing user data')
       dispatch(setUser({username: null, password: null, cookie: null}));
+      dispatch(setReservations(null));
     })
     .catch(error => {
+      dispatch(setUser({username: null, password: null, cookie: null}));
+      dispatch(setReservations(null));
       console.log('error encountered:', error)
     })
   }

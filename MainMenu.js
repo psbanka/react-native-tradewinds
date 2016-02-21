@@ -48,15 +48,21 @@ export default class MainMenu extends Component {
       <ScrollableTabView ref='tabview' renderTabBar={() => <CustomTabBar/>}>
         <Reservations
           key={'reorder'}
+          working={this.props.working}
           reservations={this.props.reservations}
           setReservations={this.props.setReservations}
           tabLabel={'Reorder'}
+          setWorking={this.props.setWorking}
+          clearBusy={this.props.clearBusy}
         />
         <AddReservations
           key={'add-circle'}
+          working={this.props.working}
           tabLabel={'add-circle'}
           setReservations={this.props.setReservations}
           changeView={this.changeView.bind(this)}
+          setWorking={this.props.setWorking}
+          clearBusy={this.props.clearBusy}
         />
         <Settings
           key={'account-circle'}

@@ -15,6 +15,7 @@ class TradewindsApp extends Component {
           busy={this.props.busy}
           userData={this.props.userData}
           reservations={this.props.reservations}
+          working={this.props.working}
           {...this.props.actions}
         />
     );
