@@ -5,12 +5,17 @@ import * as types from './actionTypes';
 import _ from 'lodash';
 const CookieManager = require('react-native-cookies');
 
+type UserData = {
+  username: string,
+  password: string,
+}
+
 const urls = {
   newReservations: 'http://www.tradewindssailing.com/wsdl/ReserveDates.php',
 };
 
 const userDataKeys = [
-    'username','password', 'cookie',
+    'username','password',
 ];
 
 /*********************************************************************
@@ -29,7 +34,7 @@ export function clearBusy(): any {
   };
 }
 
-export function setUser(userData: any): any {
+export function setUser(userData: UserData): any {
   return {
     type: types.SET_USER_DATA,
     userData,
@@ -48,35 +53,40 @@ export function setReservations(html: string): any {
  *********************************************************************/
 
 export function readUserFromStorage() : any {
-    return function(dispatch) {
-        dispatch(setBusy());
+  return function(dispatch) {
+    dispatch(setBusy());
 
-        let savedUserData = {
-          username: '',
-          password: '',
-          cookie: '',
-        };
+    let savedUserData = {
+      username: '',
+      password: '',
+    };
 
-        Promise.all(_.map(userDataKeys, (key) => {
-            let fullKey = '@tradewinds:' + key;
-            let promise = AsyncStorage.getItem(fullKey)
-            promise.then((value) => {
-                savedUserData[key] = value;
-            });
-            return promise;
-        }))
-            .then((allResults) => {
-                dispatch(setUser(savedUserData));
-                dispatch(loginUser(savedUserData));
-            })
-            .catch((error) => {
-                console.log('Error reading data from storage:')
-                console.log(error);
-                dispatch(clearBusy());
-                // TODO: Return user to login screen
-            })
-            .done();
-    }
+    Promise.all(_.map(userDataKeys, (key) => {
+      let fullKey = '@tradewinds:' + key;
+      let promise = AsyncStorage.getItem(fullKey)
+      promise.then((value) => {
+        savedUserData[key] = value;
+      });
+      return promise;
+    }))
+    .then((allResults) => {
+      if (_.isNull(savedUserData.username) || _.isNull(savedUserData.password)) {
+        console.log('no saved user data')
+        dispatch(clearBusy());
+      } else {
+        console.log('logging in user', savedUserData)
+        dispatch(setUser(savedUserData));
+        dispatch(loginUser(savedUserData, false));
+      }
+    })
+    .catch((error) => {
+      console.log('Error reading data from storage:')
+      console.log(error);
+      dispatch(clearBusy());
+      // TODO: Return user to login screen
+    })
+    .done();
+  }
 };
 
 function getExpiry() {
@@ -113,12 +123,26 @@ export function setCookie(newCookie: any) : any {
   }
 }
 
-export function loginUser(userData: any) : any {
+function saveUserData(userData: UserData): Promise {
+  debugger
+  return Promise.all(_.map(userDataKeys, (key) => {
+    let fullKey = '@tradewinds:' + key;
+    console.log('setting', fullKey, userData[key])
+    return AsyncStorage.setItem(fullKey, userData[key])
+  }))
+
+}
+
+export function loginUser(userData: UserData, rememberMe: bool) : any {
   return function(dispatch) {
 
     // userData.password = '4zBDkV1Agi';
     // userData.username = '8637900';
 
+    if (rememberMe) {
+      saveUserData(userData)
+    }
+    dispatch(setBusy());
     dispatch(setUser(userData))
 
     fetch('http://www.tradewindssailing.com/wsdl/Logon.php')

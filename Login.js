@@ -144,7 +144,7 @@ export default class Login extends Component {
     }
 
     handleSubmit() {
-        this.props.onSubmit(this.state.userData);
+        this.props.onSubmit(this.state.userData, this.state.rememberMe);
     }
 
     render() {
