@@ -28,13 +28,12 @@ First, you're going to want to install the following tools on your Mac:
 
 #### 1. Capture an interaction with the website
 
-The first step in building a native app replacement is to figure out exactly how the web app works. For this, you're going to want to start with the Chrome developer tools. If you're logged in to the web app, log out of it and begin by looking at the login screen. Here's an example of the app I'm trying to deal with shown here:
-
-`IMAGE: LOGIN SCREEN`
+The first step in building a native app replacement is to figure out exactly how the web app works. For this, you're going to want to start with the Chrome developer tools. If you're logged in to the web app, log out of it and begin by looking at the login screen. 
 
 Open the developer tools and log in to the app. Once you've made a successful login attempt, go to the developer tools and find the HTTP request that was responsible for you logging in successfully to the site (see screen-cap)
 
-`http://cl.ly/0C14000v211t` << screen-cap
+![screen-cap](http://cl.ly/0C14000v211t)
+
 
 The successful login request will likely be a `POST` and will likely contain some body information that has your username and password. In my case, the login attempt was the very first call to the website to the URL: `URL:http://www.tradewindssailing.com/wsdl/Logon-action.php` I can see from the Chrome developer tools that the post contains my clear-text username and password (over http, this is a pretty bad practice, but we already know this website is old and lousy, and poor security shouldn't surprise us at this point).
 
