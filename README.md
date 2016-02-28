@@ -9,7 +9,7 @@ panning around the page and zooming in and out and trying to remember my
 password (that it won't save!) and trying to deal with the twitchy and buggy
 JavaScript controls. And I think: "Oh, I'll wait until I get home." 
 
-![Website](docs/tradewinds-tour-of-site-on-desktop.gif?raw=true "Tradewinds in browser")
+![Website](https://github.com/psbanka/react-native-tradewinds/blob/master/doc/tradewinds-tour-of-site-on-desktop.gif "Tradewinds in browser")
 
 But that's a hassle. And anyway – why do we accept that the performance on a
 brand new mobile device is inferior to a ten-year-old windows PC running
