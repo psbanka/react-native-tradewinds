@@ -149,6 +149,7 @@ export default class AddReservations extends Component {
   open(varName: string) {
     if (_.isNull(this.state[varName].date)) {
       let initialDate = new Date();
+      initialDate.setHours(0,0,0,0);
       initialDate.setDate(initialDate.getDate() + 1); // Default to tomorrow
       if (varName === 'end') {
         if (_.isNull(this.state.start.date)) {
@@ -156,6 +157,8 @@ export default class AddReservations extends Component {
           return;
         }
         initialDate.setDate(this.state.start.date.getDate()); // assume return on same day
+        initialDate.setMonth(this.state.start.date.getMonth());
+        initialDate.setFullYear(this.state.start.date.getFullYear());
       }
       let existing = this.state[varName]
       existing.date = initialDate
@@ -308,7 +311,7 @@ export default class AddReservations extends Component {
         }))
         if (message.length) {
           let text = message[0]
-          if (text.toLowerCase().indexOf('added')) {
+          if (text.toLowerCase().indexOf('added') !== -1) {
             AlertIOS.alert('Success', text);
             this.setState({
               availableBoats: [],
