@@ -11,11 +11,11 @@ JavaScript controls. And I think: "Oh, I'll wait until I get home."
 
 ##### The website using a desktop browser:
 
-![Website-on-desktop](https://github.com/psbanka/react-native-tradewinds/blob/master/doc/tradewinds-tour-of-site-on-desktop.gif "Tradewinds in browser")
+![Website-on-desktop](https://github.com/psbanka/react-native-tradewinds/blob/master/doc/tradewinds-tour-of-site-on-desktop.gif height="400")
 
 ##### The website using an iPhone:
 
-![Website-on-iphone](https://github.com/psbanka/react-native-tradewinds/blob/master/doc/tradewinds-use-safari.gif "Tradewinds in browser")
+![Website-on-iphone](https://github.com/psbanka/react-native-tradewinds/blob/master/doc/tradewinds-use-safari.gif height="300")
 
 But that's a hassle. And anyway – **why do we accept that the performance on a
 brand new mobile device is inferior to a ten-year-old windows PC running
