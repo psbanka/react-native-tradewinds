@@ -11,7 +11,7 @@ JavaScript controls. And I think: "Oh, I'll wait until I get home."
 
 ##### The website using a desktop browser:
 
-![Website-on-desktop](https://github.com/psbanka/react-native-tradewinds/blob/master/doc/tradewinds-tour-of-site-on-desktop.gif width="508" height="400")
+![Website-on-desktop](https://github.com/psbanka/react-native-tradewinds/blob/master/doc/tradewinds-tour-of-site-on-desktop.gif)
 
 ##### The website using an iPhone:
 
