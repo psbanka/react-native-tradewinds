@@ -2,25 +2,31 @@
 ## Introduction
 
 There is a website that my sailing club provides which must have been written
-ten or fifteen years ago that is miserable to use. It's especially bad on my
+ten or fifteen years ago that is a little difficult to use, but it's **especially bad** on my
 iPhone. The purpose of this website is to reserve sailboats, and sometimes I
 want to whip out my phone and reserve a boat right away. But then I think about
 panning around the page and zooming in and out and trying to remember my
 password (that it won't save!) and trying to deal with the twitchy and buggy
 JavaScript controls. And I think: "Oh, I'll wait until I get home." 
 
-![Website](https://github.com/psbanka/react-native-tradewinds/blob/master/doc/tradewinds-tour-of-site-on-desktop.gif "Tradewinds in browser")
+##### The website using a desktop browser:
 
-But that's a hassle. And anyway – why do we accept that the performance on a
+![Website-on-desktop](https://github.com/psbanka/react-native-tradewinds/blob/master/doc/tradewinds-tour-of-site-on-desktop.gif "Tradewinds in browser")
+
+##### The website using an iPhone:
+
+![Website-on-iphone](https://github.com/psbanka/react-native-tradewinds/blob/master/doc/tradewinds-use-safari.gif "Tradewinds in browser")
+
+But that's a hassle. And anyway – **why do we accept that the performance on a
 brand new mobile device is inferior to a ten-year-old windows PC running
-Internet Explorer version 6? I want a dedicated app on my phone which just
+Internet Explorer version 6?** I want a dedicated app on my phone which just
 deals with showing and making reservations. Let me just tap on an app icon, see
 my current reservations and five or six taps later, make a new one without ever
 touching a browser.
 
 If there is an app like this in your life, and if you are a self-respecting
 JavaScript developer, there is no reason you can't have the experience you
-want. There is a new breed of JavaScript frameworks (such as [React Native],
+want! There is a new breed of JavaScript frameworks (such as [React Native],
 [NativeScript], and [Tabris.js]) which allow you to sit down and take that
 lousy web app and make a simple, attractive, and easy-to-use **native** app
 that provides just the interface that you want.
@@ -59,7 +65,6 @@ First, you're going to want to install the following tools on your Mac:
 
 #### 1. Capture an interaction with the website
 
-
 The first step in building a native app replacement is to figure out exactly
 how the web app works. For this, you're going to want to start with the Chrome
 developer tools. If you're logged in to the web app, log out of it and begin by
@@ -68,8 +73,6 @@ looking at the login screen.
 Open the developer tools and log in to the app. Once you've made a successful
 login attempt, go to the developer tools and find the HTTP request that was
 responsible for you logging in successfully to the site (see screen-cap)
-
-![Image](http://cl.ly/0C14000v211t?raw=true)
 
 The successful login request will likely be a `POST` and will likely contain
 some body information that has your username and password. In my case, the
@@ -90,8 +93,13 @@ need to produce the same kind of request from your React-Native app.
 
 Luckily Chrome makes this **amazingly** easy. All you do is right-click on the
 request which contains the interaction with the website and select `Copy as
-cURL`. Then paste the resulting data into the nearest text-editor. When I did
-this, this is what I got:
+cURL`. Then paste the resulting data into the nearest text-editor.
+
+##### Screen-shot of capturing login attempt using Chome Devtools
+
+![tradewinds-curl](https://github.com/psbanka/react-native-tradewinds/blob/master/doc/tradewinds-create-curl.gif "Tradewinds in browser")
+
+When I did this, this is what I got:
 
 ```
 curl 'http://www.tradewindssailing.com/wsdl/Logon-action.php' \
@@ -224,9 +232,7 @@ create a curl request for anyone's username and password. Now I need to convert
 this request to something that can be used in React Native. 
 
 If you'd like to see an example of how this curl call is converted to
-React-Native, it can be seen here:
-
-https://github.com/psbanka/react-native-tradewinds/blob/master/actions/tradewindsActions.js#L109
+React-Native, it can be seen in this [converted curl call].
 
 Essentially it boils down to the following:
 
@@ -330,7 +336,9 @@ Here is an example of a betwixt session in-action, where we can see and inspect
 the calls being made by the fetch API from the React Native system on the iOS
 simulator:
 
-http://cl.ly/0w0u3S3p1Z3Y
+##### Debugging using Betwixt
+
+![using-fetch](https://github.com/psbanka/react-native-tradewinds/blob/master/doc/tradewinds-use-betwixt.gif "debugging using betwixt")
 
 ### The final product
 
@@ -341,6 +349,10 @@ it for yourself only. Either way, you have proven that you can make something
 simple and useful for yourself and that you don't have to be at the mercy of
 lousy web apps on your phone any longer!
 
+Here is an example of the final running iPhone app:
+
+![final-app](https://github.com/psbanka/react-native-tradewinds/blob/master/doc/tradewinds-app "final app")
+
    [React Native]: <https://facebook.github.io/react-native/>
    [NativeScript]: <https://www.nativescript.org/>
    [Tabris.js]: <https://tabrisjs.com/>
@@ -349,3 +361,4 @@ lousy web apps on your phone any longer!
    [betwixt]: <https://github.com/kdzwinel/betwixt/blob/master/README.md>
    [jsonapi]: <http://jsonapi.org/>
    [fetch api]: <https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API>
+   [converted curl call]: <https://github.com/psbanka/react-native-tradewinds/blob/master/actions/tradewindsActions.js#L109>
