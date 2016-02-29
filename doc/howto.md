@@ -4,14 +4,15 @@
 There is a website that my sailing club provides which must have been written
 ten or fifteen years ago that is a little difficult to use, but it's **especially bad** on my
 iPhone. The purpose of this website is to reserve sailboats, and sometimes I
-want to whip out my phone and reserve a boat right away. But then I think about
-panning around the page and zooming in and out and trying to remember my
-password (that it won't save!) and trying to deal with the twitchy and buggy
-JavaScript controls. And I think: "Oh, I'll wait until I get home." 
-
+want to whip out my phone and reserve a boat right away.
 ##### The website using a desktop browser:
 
 ![Website-on-desktop](https://github.com/psbanka/react-native-tradewinds/blob/master/doc/tradewinds-tour-of-site-on-desktop.gif)
+
+And then I think about panning around the page and zooming in and out and
+trying to remember my password (that it won't save!) and trying to deal with
+the twitchy and buggy JavaScript controls. And I think: "Oh, I'll wait until I
+get home." 
 
 ##### The website using an iPhone:
 
@@ -97,7 +98,7 @@ cURL`. Then paste the resulting data into the nearest text-editor.
 
 ##### Screen-shot of capturing login attempt using Chome Devtools
 
-![tradewinds-curl](https://github.com/psbanka/react-native-tradewinds/blob/master/doc/tradewinds-create-curl.gif "Tradewinds in browser")
+![tradewinds-curl](https://github.com/psbanka/react-native-tradewinds/blob/master/doc/tradewindws-create-curl.gif "Getting the curl command associated with web requests")
 
 When I did this, this is what I got:
 
@@ -349,9 +350,9 @@ it for yourself only. Either way, you have proven that you can make something
 simple and useful for yourself and that you don't have to be at the mercy of
 lousy web apps on your phone any longer!
 
-Here is an example of the final running iPhone app:
+##### Here is an example of the final running iPhone app:
 
-![final-app](https://github.com/psbanka/react-native-tradewinds/blob/master/doc/tradewinds-app "final app")
+![final-app](https://github.com/psbanka/react-native-tradewinds/blob/master/doc/tradewinds-app.gif "final app")
 
    [React Native]: <https://facebook.github.io/react-native/>
    [NativeScript]: <https://www.nativescript.org/>
