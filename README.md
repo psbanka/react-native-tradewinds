@@ -1,4 +1,6 @@
 
+## Introduction
+
 This is an open-source React-Native app for managing reservations for a sailing club called Tradewinds. Here's what the app looks like:
 
 ![final-app](https://github.com/psbanka/react-native-tradewinds/blob/master/doc/tradewinds-app.gif "final app")
@@ -8,6 +10,8 @@ in combination with the power of `fetch` in the React Native environment to
 convert an app that is very difficult to use in Safari into a high-quality
 native app.
 
-Refer to the [todo] file for a detailed tutorial!
+## Tutorial
 
-   [todo]: <https://github.com/psbanka/react-native-tradewinds/blob/master/doc/howto.md>
+Refer to the [how-to] file for a detailed tutorial!
+
+   [how-to]: <https://github.com/psbanka/react-native-tradewinds/blob/master/doc/howto.md>
