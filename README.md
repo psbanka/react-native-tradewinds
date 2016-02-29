@@ -15,10 +15,7 @@ JavaScript controls. And I think: "Oh, I'll wait until I get home."
 
 ##### The website using an iPhone:
 
-![Website-on-iphone](https://github.com/psbanka/react-native-tradewinds/blob/master/doc/tradewinds-use-safari.gif width="218" height="400")
-
-<img src="https://github.com/psbanka/react-native-tradewinds/blob/master/doc/tradewinds-use-safari.gif alt="" data-canonical-src="https://github.com/psbanka/react-native-tradewinds/blob/master/doc/tradewinds-tour-of-site-on-desktop.gif" width="508" height="400" />
-
+![Website-on-iphone](https://github.com/psbanka/react-native-tradewinds/blob/master/doc/tradewinds-use-safari.gif)
 
 But that's a hassle. And anyway – **why do we accept that the performance on a
 brand new mobile device is inferior to a ten-year-old windows PC running
