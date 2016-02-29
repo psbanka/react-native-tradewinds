@@ -17,6 +17,9 @@ JavaScript controls. And I think: "Oh, I'll wait until I get home."
 
 ![Website-on-iphone](https://github.com/psbanka/react-native-tradewinds/blob/master/doc/tradewinds-use-safari.gif width="218" height="400")
 
+<img src="https://github.com/psbanka/react-native-tradewinds/blob/master/doc/tradewinds-use-safari.gif alt="" data-canonical-src="https://github.com/psbanka/react-native-tradewinds/blob/master/doc/tradewinds-tour-of-site-on-desktop.gif" width="508" height="400" />
+
+
 But that's a hassle. And anyway – **why do we accept that the performance on a
 brand new mobile device is inferior to a ten-year-old windows PC running
 Internet Explorer version 6?** I want a dedicated app on my phone which just
